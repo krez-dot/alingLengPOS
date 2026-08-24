@@ -27,7 +27,7 @@ require __DIR__ . '/../includes/header.php';
 
 <div class="d-flex justify-content-between align-items-center mb-3">
     <h1>Products</h1>
-    <a href="/products/create.php" class="btn btn-primary">+ Add Product</a>
+    <a href="<?= BASE_URL ?>/products/create.php" class="btn btn-primary">+ Add Product</a>
 </div>
 
 <form class="row g-2 mb-3" method="get">
@@ -79,8 +79,8 @@ require __DIR__ . '/../includes/header.php';
                     <?php endif; ?>
                 </td>
                 <td>
-                    <a href="/products/edit.php?id=<?= $product['id'] ?>" class="btn btn-sm btn-outline-primary">Edit</a>
-                    <form action="/products/delete.php" method="post" class="d-inline" onsubmit="return confirm('Delete this product?');">
+                    <a href="<?= BASE_URL ?>/products/edit.php?id=<?= $product['id'] ?>" class="btn btn-sm btn-outline-primary">Edit</a>
+                    <form action="<?= BASE_URL ?>/products/delete.php" method="post" class="d-inline" onsubmit="return confirm('Delete this product?');">
                         <input type="hidden" name="id" value="<?= $product['id'] ?>">
                         <button type="submit" class="btn btn-sm btn-outline-danger">Delete</button>
                     </form>

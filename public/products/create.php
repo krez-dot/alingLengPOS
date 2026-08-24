@@ -122,7 +122,7 @@ require __DIR__ . '/../includes/header.php';
     </div>
     <div class="col-12">
         <button type="submit" class="btn btn-primary">Save Product</button>
-        <a href="/products/index.php" class="btn btn-outline-secondary">Cancel</a>
+        <a href="<?= BASE_URL ?>/products/index.php" class="btn btn-outline-secondary">Cancel</a>
     </div>
 </form>
 

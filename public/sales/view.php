@@ -43,6 +43,6 @@ require __DIR__ . '/../includes/header.php';
     </div>
 </div>
 
-<a href="/sales/index.php" class="btn btn-outline-secondary mt-3">Back to Sales History</a>
+<a href="<?= BASE_URL ?>/sales/index.php" class="btn btn-outline-secondary mt-3">Back to Sales History</a>
 
 <?php require __DIR__ . '/../includes/footer.php'; ?>

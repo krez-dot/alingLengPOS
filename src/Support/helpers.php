@@ -9,7 +9,8 @@ function flash(string $type, string $message): void
 
 function redirect(string $path): void
 {
-    header("Location: {$path}");
+    $base = defined('BASE_URL') ? BASE_URL : '';
+    header("Location: {$base}{$path}");
     exit;
 }
 

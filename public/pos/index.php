@@ -58,7 +58,7 @@ require __DIR__ . '/../includes/header.php';
                 </table>
                 <h5 class="text-end">Total: &#8369;<span id="cartTotal">0.00</span></h5>
 
-                <form method="post" action="/pos/checkout.php" id="checkoutForm">
+                <form method="post" action="<?= BASE_URL ?>/pos/checkout.php" id="checkoutForm">
                     <div id="hiddenItems"></div>
                     <div class="mb-2">
                         <label class="form-label">Amount Paid (&#8369;)</label>

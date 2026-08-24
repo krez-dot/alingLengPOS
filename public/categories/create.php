@@ -43,7 +43,7 @@ require __DIR__ . '/../includes/header.php';
     </div>
     <div class="col-12">
         <button type="submit" class="btn btn-primary">Save</button>
-        <a href="/categories/index.php" class="btn btn-outline-secondary">Cancel</a>
+        <a href="<?= BASE_URL ?>/categories/index.php" class="btn btn-outline-secondary">Cancel</a>
     </div>
 </form>
 

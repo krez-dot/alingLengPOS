@@ -12,7 +12,7 @@ require __DIR__ . '/../includes/header.php';
 
 <div class="d-flex justify-content-between align-items-center mb-3">
     <h1>Suppliers</h1>
-    <a href="/suppliers/create.php" class="btn btn-primary">+ Add Supplier</a>
+    <a href="<?= BASE_URL ?>/suppliers/create.php" class="btn btn-primary">+ Add Supplier</a>
 </div>
 
 <table class="table table-striped bg-white">
@@ -28,8 +28,8 @@ require __DIR__ . '/../includes/header.php';
                 <td><?= htmlspecialchars($sup['phone'] ?? '-') ?></td>
                 <td><?= htmlspecialchars($sup['address'] ?? '-') ?></td>
                 <td>
-                    <a href="/suppliers/edit.php?id=<?= $sup['id'] ?>" class="btn btn-sm btn-outline-primary">Edit</a>
-                    <form action="/suppliers/delete.php" method="post" class="d-inline" onsubmit="return confirm('Delete this supplier?');">
+                    <a href="<?= BASE_URL ?>/suppliers/edit.php?id=<?= $sup['id'] ?>" class="btn btn-sm btn-outline-primary">Edit</a>
+                    <form action="<?= BASE_URL ?>/suppliers/delete.php" method="post" class="d-inline" onsubmit="return confirm('Delete this supplier?');">
                         <input type="hidden" name="id" value="<?= $sup['id'] ?>">
                         <button type="submit" class="btn btn-sm btn-outline-danger">Delete</button>
                     </form>

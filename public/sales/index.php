@@ -46,7 +46,7 @@ require __DIR__ . '/../includes/header.php';
                 <td>&#8369;<?= number_format((float) $sale['total_amount'], 2) ?></td>
                 <td>&#8369;<?= number_format((float) $sale['amount_paid'], 2) ?></td>
                 <td>&#8369;<?= number_format((float) $sale['change_due'], 2) ?></td>
-                <td><a href="/sales/view.php?id=<?= $sale['id'] ?>" class="btn btn-sm btn-outline-primary">View</a></td>
+                <td><a href="<?= BASE_URL ?>/sales/view.php?id=<?= $sale['id'] ?>" class="btn btn-sm btn-outline-primary">View</a></td>
             </tr>
         <?php endforeach; ?>
     </tbody>
