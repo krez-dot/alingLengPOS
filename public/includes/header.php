@@ -3,17 +3,24 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title><?= htmlspecialchars($pageTitle ?? 'Sari-Sari POS') ?></title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <title><?= htmlspecialchars($pageTitle ?? 'QuickTally') ?></title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
     <link href="<?= BASE_URL ?>/assets/css/style.css" rel="stylesheet">
 </head>
 <body>
-<?php require __DIR__ . '/nav.php'; ?>
-<main class="container my-4">
-    <?php if (!empty($_SESSION['flash'])): ?>
-        <div class="alert alert-<?= htmlspecialchars($_SESSION['flash']['type']) ?> alert-dismissible fade show" role="alert">
-            <?= htmlspecialchars($_SESSION['flash']['message']) ?>
-            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+<div class="app-shell">
+    <?php require __DIR__ . '/nav.php'; ?>
+    <div class="sidebar-backdrop" id="sidebarBackdrop"></div>
+    <div class="main-content">
+        <div class="mobile-topbar">
+            <button type="button" class="icon-btn" id="sidebarToggle" aria-label="Toggle menu"><?= navIcon('menu') ?></button>
+            <span class="brand-name">QuickTally</span>
         </div>
-        <?php unset($_SESSION['flash']); ?>
-    <?php endif; ?>
+        <?php if (!empty($_SESSION['flash'])): ?>
+            <div class="alert alert-<?= htmlspecialchars($_SESSION['flash']['type']) ?>">
+                <span><?= htmlspecialchars($_SESSION['flash']['message']) ?></span>
+                <button type="button" class="alert-close" onclick="this.parentElement.remove()">&times;</button>
+            </div>
+            <?php unset($_SESSION['flash']); ?>
+        <?php endif; ?>

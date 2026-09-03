@@ -79,10 +79,21 @@ class Sale extends Model
         return false;
     }
 
-    public function history(string $dateFrom = '', string $dateTo = '', int $limit = 20, int $offset = 0): array
-    {
+    public function history(
+        string $keyword = '',
+        string $dateFrom = '',
+        string $dateTo = '',
+        string $order = 'DESC',
+        int $limit = 20,
+        int $offset = 0
+    ): array {
         $sql = 'SELECT * FROM sales WHERE 1=1';
         $params = [];
+
+        if ($keyword !== '') {
+            $sql .= ' AND reference_no LIKE :keyword';
+            $params['keyword'] = "%{$keyword}%";
+        }
 
         if ($dateFrom !== '') {
             $sql .= ' AND created_at >= :date_from';
@@ -94,7 +105,8 @@ class Sale extends Model
             $params['date_to'] = $dateTo . ' 23:59:59';
         }
 
-        $sql .= ' ORDER BY created_at DESC LIMIT :limit OFFSET :offset';
+        $order = strtoupper($order) === 'ASC' ? 'ASC' : 'DESC';
+        $sql .= " ORDER BY created_at {$order} LIMIT :limit OFFSET :offset";
 
         $stmt = $this->db->prepare($sql);
         foreach ($params as $key => $value) {
@@ -130,5 +142,21 @@ class Sale extends Model
         return (int) $this->db
             ->query('SELECT COUNT(*) FROM sales WHERE DATE(created_at) = CURDATE()')
             ->fetchColumn();
+    }
+
+    public function topSelling(int $limit = 5): array
+    {
+        $stmt = $this->db->prepare(
+            'SELECT p.id, p.name, SUM(si.quantity) AS total_qty
+             FROM sale_items si
+             JOIN products p ON p.id = si.product_id
+             GROUP BY p.id, p.name
+             ORDER BY total_qty DESC
+             LIMIT :limit'
+        );
+        $stmt->bindValue(':limit', $limit, PDO::PARAM_INT);
+        $stmt->execute();
+
+        return $stmt->fetchAll();
     }
 }

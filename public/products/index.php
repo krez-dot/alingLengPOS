@@ -21,85 +21,77 @@ $totalProducts = $productModel->countSearch($keyword, $categoryId);
 $totalPages = (int) ceil($totalProducts / $perPage);
 $categories = $categoryModel->all('name');
 
-$pageTitle = 'Products - Sari-Sari POS';
+$activeNav = 'products';
+$pageTitle = 'Products - QuickTally';
 require __DIR__ . '/../includes/header.php';
 ?>
 
-<div class="d-flex justify-content-between align-items-center mb-3">
-    <h1>Products</h1>
+<div class="page-header page-header-row">
+    <div>
+        <h1>Products</h1>
+        <p>Manage your catalog &mdash; add, edit, or remove products.</p>
+    </div>
     <a href="<?= BASE_URL ?>/products/create.php" class="btn btn-primary">+ Add Product</a>
 </div>
 
-<form class="row g-2 mb-3" method="get">
-    <div class="col-md-4">
-        <input type="text" name="q" class="form-control" placeholder="Search by name..." value="<?= htmlspecialchars($keyword) ?>">
+<form method="get" class="toolbar">
+    <div class="search-input-wrap">
+        <span class="search-icon"><?= navIcon('search') ?></span>
+        <input type="text" name="q" class="search-input" placeholder="Search name or SKU..." value="<?= htmlspecialchars($keyword) ?>">
     </div>
-    <div class="col-md-3">
-        <select name="category_id" class="form-select">
-            <option value="">All Categories</option>
-            <?php foreach ($categories as $cat): ?>
-                <option value="<?= $cat['id'] ?>" <?= $categoryId === (int) $cat['id'] ? 'selected' : '' ?>>
-                    <?= htmlspecialchars($cat['name']) ?>
-                </option>
-            <?php endforeach; ?>
-        </select>
+    <div class="pill-group">
+        <button type="submit" name="category_id" value="" class="pill <?= $categoryId === null ? 'active' : '' ?>">All</button>
+        <?php foreach ($categories as $cat): ?>
+            <button type="submit" name="category_id" value="<?= $cat['id'] ?>" class="pill <?= $categoryId === (int) $cat['id'] ? 'active' : '' ?>"><?= htmlspecialchars($cat['name']) ?></button>
+        <?php endforeach; ?>
     </div>
-    <div class="col-md-3">
-        <select name="sort" class="form-select">
-            <option value="name" <?= $sortBy === 'name' ? 'selected' : '' ?>>Sort: Name</option>
-            <option value="selling_price" <?= $sortBy === 'selling_price' ? 'selected' : '' ?>>Sort: Price</option>
-            <option value="stock_quantity" <?= $sortBy === 'stock_quantity' ? 'selected' : '' ?>>Sort: Stock</option>
-        </select>
-    </div>
-    <div class="col-md-2">
-        <button class="btn btn-outline-secondary w-100" type="submit">Filter</button>
-    </div>
+    <select name="sort" class="sort-select" onchange="this.form.submit()">
+        <option value="name" <?= $sortBy === 'name' ? 'selected' : '' ?>>Sort: Name</option>
+        <option value="selling_price" <?= $sortBy === 'selling_price' ? 'selected' : '' ?>>Sort: Price</option>
+        <option value="stock_quantity" <?= $sortBy === 'stock_quantity' ? 'selected' : '' ?>>Sort: Stock</option>
+    </select>
 </form>
 
-<table class="table table-striped table-bordered bg-white">
-    <thead>
-        <tr>
-            <th>SKU</th><th>Name</th><th>Category</th><th>Price</th><th>Stock</th><th>Actions</th>
-        </tr>
-    </thead>
-    <tbody>
-        <?php if (empty($products)): ?>
-            <tr><td colspan="6" class="text-center text-muted">No products found.</td></tr>
-        <?php endif; ?>
-        <?php foreach ($products as $product): ?>
-            <tr>
-                <td><?= htmlspecialchars($product['sku']) ?></td>
-                <td><?= htmlspecialchars($product['name']) ?></td>
-                <td><?= htmlspecialchars($product['category_name'] ?? '-') ?></td>
-                <td>&#8369;<?= number_format((float) $product['selling_price'], 2) ?></td>
-                <td>
-                    <?= (int) $product['stock_quantity'] ?>
-                    <?php if ((int) $product['stock_quantity'] <= (int) $product['reorder_level']): ?>
-                        <span class="badge bg-danger">Low</span>
-                    <?php endif; ?>
-                </td>
-                <td>
-                    <a href="<?= BASE_URL ?>/products/edit.php?id=<?= $product['id'] ?>" class="btn btn-sm btn-outline-primary">Edit</a>
-                    <form action="<?= BASE_URL ?>/products/delete.php" method="post" class="d-inline" onsubmit="return confirm('Delete this product?');">
-                        <input type="hidden" name="id" value="<?= $product['id'] ?>">
-                        <button type="submit" class="btn btn-sm btn-outline-danger">Delete</button>
-                    </form>
-                </td>
-            </tr>
-        <?php endforeach; ?>
-    </tbody>
-</table>
+<div class="table-wrap">
+    <table class="data-table">
+        <thead>
+            <tr><th>SKU</th><th>Product</th><th>Category</th><th>Price</th><th>Stock</th><th>Actions</th></tr>
+        </thead>
+        <tbody>
+            <?php if (empty($products)): ?>
+                <tr class="empty-row"><td colspan="6">No products found.</td></tr>
+            <?php endif; ?>
+            <?php foreach ($products as $product): $isLow = (int) $product['stock_quantity'] <= (int) $product['reorder_level']; ?>
+                <tr>
+                    <td class="muted"><?= htmlspecialchars($product['sku']) ?></td>
+                    <td class="strong"><?= htmlspecialchars($product['name']) ?></td>
+                    <td><span class="badge-pill <?= categoryBadgeClass($product['category_name'] ?? null) ?>"><?= htmlspecialchars($product['category_name'] ?? '-') ?></span></td>
+                    <td class="price-cell">&#8369;<?= number_format((float) $product['selling_price'], 2) ?></td>
+                    <td>
+                        <?= (int) $product['stock_quantity'] ?> units
+                        <span class="badge-pill <?= $isLow ? 'badge-low' : 'badge-ok' ?>"><?= $isLow ? 'Low' : 'OK' ?></span>
+                    </td>
+                    <td class="actions-cell">
+                        <a href="<?= BASE_URL ?>/products/edit.php?id=<?= $product['id'] ?>" class="btn btn-outline btn-sm">Edit</a>
+                        <form action="<?= BASE_URL ?>/products/delete.php" method="post" class="inline-form" onsubmit="return confirm('Delete this product?');">
+                            <input type="hidden" name="id" value="<?= $product['id'] ?>">
+                            <button type="submit" class="btn btn-danger btn-sm">Delete</button>
+                        </form>
+                    </td>
+                </tr>
+            <?php endforeach; ?>
+        </tbody>
+    </table>
+</div>
 
 <?php if ($totalPages > 1): ?>
-    <nav>
-        <ul class="pagination">
-            <?php for ($i = 1; $i <= $totalPages; $i++): ?>
-                <li class="page-item <?= $i === $page ? 'active' : '' ?>">
-                    <a class="page-link" href="?q=<?= urlencode($keyword) ?>&category_id=<?= (int) $categoryId ?>&sort=<?= htmlspecialchars($sortBy) ?>&page=<?= $i ?>"><?= $i ?></a>
-                </li>
-            <?php endfor; ?>
-        </ul>
-    </nav>
+    <ul class="pagination">
+        <?php for ($i = 1; $i <= $totalPages; $i++): ?>
+            <li class="<?= $i === $page ? 'active' : '' ?>">
+                <a href="?q=<?= urlencode($keyword) ?>&category_id=<?= (int) $categoryId ?>&sort=<?= htmlspecialchars($sortBy) ?>&page=<?= $i ?>"><?= $i ?></a>
+            </li>
+        <?php endfor; ?>
+    </ul>
 <?php endif; ?>
 
 <?php require __DIR__ . '/../includes/footer.php'; ?>

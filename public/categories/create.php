@@ -24,27 +24,33 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     }
 }
 
-$pageTitle = 'Add Category - Sari-Sari POS';
+$activeNav = 'categories';
+$pageTitle = 'Add Category - QuickTally';
 require __DIR__ . '/../includes/header.php';
 ?>
 
-<h1 class="mb-4">Add Category</h1>
+<div class="page-header">
+    <h1>Add Category</h1>
+    <p>Categories help organize the product catalog and checkout filters.</p>
+</div>
 
 <?php if (!empty($errors)): ?>
     <div class="alert alert-danger">
-        <ul class="mb-0"><?php foreach ($errors as $error): ?><li><?= htmlspecialchars($error) ?></li><?php endforeach; ?></ul>
+        <ul><?php foreach ($errors as $error): ?><li><?= htmlspecialchars($error) ?></li><?php endforeach; ?></ul>
     </div>
 <?php endif; ?>
 
-<form method="post" class="row g-3 bg-white p-4 rounded shadow-sm" style="max-width: 500px;">
-    <div class="col-12">
-        <label class="form-label">Category Name</label>
-        <input type="text" name="name" class="form-control" value="<?= old($input, 'name') ?>" required>
-    </div>
-    <div class="col-12">
-        <button type="submit" class="btn btn-primary">Save</button>
-        <a href="<?= BASE_URL ?>/categories/index.php" class="btn btn-outline-secondary">Cancel</a>
-    </div>
-</form>
+<div class="card form-card">
+    <form method="post">
+        <div class="field">
+            <label>Category Name</label>
+            <input type="text" name="name" value="<?= old($input, 'name') ?>" required>
+        </div>
+        <div class="form-actions">
+            <button type="submit" class="btn btn-primary">Save</button>
+            <a href="<?= BASE_URL ?>/categories/index.php" class="btn btn-outline">Cancel</a>
+        </div>
+    </form>
+</div>
 
 <?php require __DIR__ . '/../includes/footer.php'; ?>

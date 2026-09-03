@@ -15,34 +15,37 @@ if (!$sale) {
 
 $items = $saleModel->itemsFor($saleId);
 
-$pageTitle = 'Sale Receipt - Sari-Sari POS';
+$activeNav = 'sales';
+$pageTitle = 'Sale Receipt - QuickTally';
 require __DIR__ . '/../includes/header.php';
 ?>
 
-<h1 class="mb-4">Receipt: <?= htmlspecialchars($sale['reference_no']) ?></h1>
+<div class="page-header">
+    <h1>Receipt: <?= htmlspecialchars($sale['reference_no']) ?></h1>
+    <p><?= htmlspecialchars($sale['created_at']) ?></p>
+</div>
 
-<div class="card" style="max-width: 500px;">
-    <div class="card-body">
-        <p><strong>Date:</strong> <?= htmlspecialchars($sale['created_at']) ?></p>
-        <table class="table table-sm">
-            <thead><tr><th>Item</th><th>Qty</th><th>Price</th><th>Subtotal</th></tr></thead>
-            <tbody>
-                <?php foreach ($items as $item): ?>
-                    <tr>
-                        <td><?= htmlspecialchars($item['product_name']) ?></td>
-                        <td><?= (int) $item['quantity'] ?></td>
-                        <td>&#8369;<?= number_format((float) $item['unit_price'], 2) ?></td>
-                        <td>&#8369;<?= number_format((float) $item['subtotal'], 2) ?></td>
-                    </tr>
-                <?php endforeach; ?>
-            </tbody>
-        </table>
-        <p class="fs-5"><strong>Total:</strong> &#8369;<?= number_format((float) $sale['total_amount'], 2) ?></p>
-        <p><strong>Amount Paid:</strong> &#8369;<?= number_format((float) $sale['amount_paid'], 2) ?></p>
-        <p><strong>Change:</strong> &#8369;<?= number_format((float) $sale['change_due'], 2) ?></p>
+<div class="card" style="max-width:520px;">
+    <table class="data-table">
+        <thead><tr><th>Item</th><th>Qty</th><th>Price</th><th>Subtotal</th></tr></thead>
+        <tbody>
+            <?php foreach ($items as $item): ?>
+                <tr>
+                    <td><?= htmlspecialchars($item['product_name']) ?></td>
+                    <td><?= (int) $item['quantity'] ?></td>
+                    <td>&#8369;<?= number_format((float) $item['unit_price'], 2) ?></td>
+                    <td class="price-cell">&#8369;<?= number_format((float) $item['subtotal'], 2) ?></td>
+                </tr>
+            <?php endforeach; ?>
+        </tbody>
+    </table>
+    <div class="receipt-summary">
+        <div class="order-row"><span>Total</span><strong>&#8369;<?= number_format((float) $sale['total_amount'], 2) ?></strong></div>
+        <div class="order-row"><span>Amount Paid</span><span>&#8369;<?= number_format((float) $sale['amount_paid'], 2) ?></span></div>
+        <div class="order-row"><span>Change</span><span>&#8369;<?= number_format((float) $sale['change_due'], 2) ?></span></div>
     </div>
 </div>
 
-<a href="<?= BASE_URL ?>/sales/index.php" class="btn btn-outline-secondary mt-3">Back to Sales History</a>
+<a href="<?= BASE_URL ?>/sales/index.php" class="btn btn-outline" style="margin-top:16px;">&larr; Back to Sales History</a>
 
 <?php require __DIR__ . '/../includes/footer.php'; ?>

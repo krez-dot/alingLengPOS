@@ -8,86 +8,103 @@ use App\Models\Sale;
 $productModel = new Product();
 $saleModel = new Sale();
 
-$totalProducts = count($productModel->all());
+$allProducts = $productModel->all();
+$totalProducts = count($allProducts);
+$totalStock = array_sum(array_column($allProducts, 'stock_quantity'));
 $lowStockItems = $productModel->lowStock();
 $todayTotal = $saleModel->todayTotal();
 $todayCount = $saleModel->todayCount();
-$recentSales = $saleModel->history('', '', 5, 0);
+$recentSales = $saleModel->history('', '', '', 'DESC', 5, 0);
+$topSelling = $saleModel->topSelling(5);
 
-$pageTitle = 'Dashboard - Sari-Sari POS';
+$activeNav = 'dashboard';
+$pageTitle = 'Dashboard - QuickTally';
 require __DIR__ . '/includes/header.php';
 ?>
 
-<h1 class="mb-4">Dashboard</h1>
+<div class="page-header">
+    <h1>Good day, Admin &#128075;</h1>
+    <p><?= date('l, F j, Y') ?> &middot; Quick summary of today's sales and current inventory status.</p>
+</div>
 
-<div class="row g-3 mb-4">
-    <div class="col-md-3">
-        <div class="card text-bg-primary">
-            <div class="card-body">
-                <h6 class="card-title">Total Products</h6>
-                <p class="fs-3 mb-0"><?= $totalProducts ?></p>
-            </div>
-        </div>
+<div class="stat-grid">
+    <div class="stat-card">
+        <div class="stat-label">Today's Sales</div>
+        <div class="stat-value green">&#8369;<?= number_format($todayTotal, 2) ?></div>
+        <div class="stat-sub"><?= $todayCount ?> transaction<?= $todayCount === 1 ? '' : 's' ?> today</div>
     </div>
-    <div class="col-md-3">
-        <div class="card text-bg-warning">
-            <div class="card-body">
-                <h6 class="card-title">Low Stock Items</h6>
-                <p class="fs-3 mb-0"><?= count($lowStockItems) ?></p>
-            </div>
-        </div>
+    <div class="stat-card">
+        <div class="stat-label">Transactions Today</div>
+        <div class="stat-value"><?= $todayCount ?></div>
+        <div class="stat-sub">Completed sales</div>
     </div>
-    <div class="col-md-3">
-        <div class="card text-bg-success">
-            <div class="card-body">
-                <h6 class="card-title">Today's Sales</h6>
-                <p class="fs-3 mb-0">&#8369;<?= number_format($todayTotal, 2) ?></p>
-            </div>
-        </div>
+    <div class="stat-card">
+        <div class="stat-label">Total Stock on Hand</div>
+        <div class="stat-value"><?= $totalStock ?></div>
+        <div class="stat-sub">Units across <?= $totalProducts ?> product<?= $totalProducts === 1 ? '' : 's' ?></div>
     </div>
-    <div class="col-md-3">
-        <div class="card text-bg-info">
-            <div class="card-body">
-                <h6 class="card-title">Transactions Today</h6>
-                <p class="fs-3 mb-0"><?= $todayCount ?></p>
-            </div>
-        </div>
+    <div class="stat-card">
+        <div class="stat-label">Low-Stock Products</div>
+        <div class="stat-value"><?= count($lowStockItems) ?></div>
+        <div class="stat-sub">At or below reorder level</div>
     </div>
 </div>
 
-<div class="row g-3">
-    <div class="col-md-6">
-        <div class="card">
-            <div class="card-header">Low Stock Alerts</div>
-            <ul class="list-group list-group-flush">
-                <?php if (empty($lowStockItems)): ?>
-                    <li class="list-group-item text-muted">All products are sufficiently stocked.</li>
-                <?php endif; ?>
-                <?php foreach ($lowStockItems as $item): ?>
-                    <li class="list-group-item d-flex justify-content-between">
-                        <span><?= htmlspecialchars($item['name']) ?></span>
-                        <span class="badge bg-danger"><?= $item['stock_quantity'] ?> left</span>
-                    </li>
-                <?php endforeach; ?>
-            </ul>
+<div class="dash-grid">
+    <div class="card">
+        <div class="card-header-row">
+            <strong>Recent Transactions</strong>
+            <a href="<?= BASE_URL ?>/sales/index.php" class="link-accent">View all</a>
         </div>
-    </div>
-    <div class="col-md-6">
-        <div class="card">
-            <div class="card-header">Recent Sales</div>
-            <ul class="list-group list-group-flush">
-                <?php if (empty($recentSales)): ?>
-                    <li class="list-group-item text-muted">No sales recorded yet.</li>
-                <?php endif; ?>
+        <?php if (empty($recentSales)): ?>
+            <p class="empty-text">No sales recorded yet.</p>
+        <?php else: ?>
+            <ul class="simple-list">
                 <?php foreach ($recentSales as $sale): ?>
-                    <li class="list-group-item d-flex justify-content-between">
-                        <span><?= htmlspecialchars($sale['reference_no']) ?> &mdash; <?= htmlspecialchars($sale['created_at']) ?></span>
-                        <span>&#8369;<?= number_format((float) $sale['total_amount'], 2) ?></span>
+                    <li>
+                        <a href="<?= BASE_URL ?>/sales/view.php?id=<?= $sale['id'] ?>">
+                            <span><?= htmlspecialchars($sale['reference_no']) ?></span>
+                            <span class="price-cell">&#8369;<?= number_format((float) $sale['total_amount'], 2) ?></span>
+                        </a>
                     </li>
                 <?php endforeach; ?>
             </ul>
-        </div>
+        <?php endif; ?>
     </div>
+    <div class="card">
+        <div class="card-header-row">
+            <strong>&#9888;&#65039; Low Stock</strong>
+            <span class="badge-pill <?= empty($lowStockItems) ? 'badge-ok' : 'badge-low' ?>"><?= count($lowStockItems) ?> items</span>
+        </div>
+        <?php if (empty($lowStockItems)): ?>
+            <p class="empty-text">All products are above their reorder level.</p>
+        <?php else: ?>
+            <ul class="simple-list">
+                <?php foreach ($lowStockItems as $item): ?>
+                    <li>
+                        <span><?= htmlspecialchars($item['name']) ?></span>
+                        <span class="badge-pill badge-low"><?= (int) $item['stock_quantity'] ?> left</span>
+                    </li>
+                <?php endforeach; ?>
+            </ul>
+        <?php endif; ?>
+    </div>
+</div>
+
+<div class="card">
+    <div class="card-header-row"><strong>&#127942; Top-Selling Products</strong></div>
+    <?php if (empty($topSelling)): ?>
+        <p class="empty-text">No sales recorded yet.</p>
+    <?php else: ?>
+        <ul class="simple-list">
+            <?php foreach ($topSelling as $t): ?>
+                <li>
+                    <span><?= htmlspecialchars($t['name']) ?></span>
+                    <span class="stat-sub"><?= (int) $t['total_qty'] ?> sold</span>
+                </li>
+            <?php endforeach; ?>
+        </ul>
+    <?php endif; ?>
 </div>
 
 <?php require __DIR__ . '/includes/footer.php'; ?>

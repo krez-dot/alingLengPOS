@@ -34,40 +34,46 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     }
 }
 
-$pageTitle = 'Edit Supplier - Sari-Sari POS';
+$activeNav = 'suppliers';
+$pageTitle = 'Edit Supplier - QuickTally';
 require __DIR__ . '/../includes/header.php';
 ?>
 
-<h1 class="mb-4">Edit Supplier</h1>
+<div class="page-header">
+    <h1>Edit Supplier</h1>
+    <p>Keep supplier contact details handy for reordering stock.</p>
+</div>
 
 <?php if (!empty($errors)): ?>
     <div class="alert alert-danger">
-        <ul class="mb-0"><?php foreach ($errors as $error): ?><li><?= htmlspecialchars($error) ?></li><?php endforeach; ?></ul>
+        <ul><?php foreach ($errors as $error): ?><li><?= htmlspecialchars($error) ?></li><?php endforeach; ?></ul>
     </div>
 <?php endif; ?>
 
-<form method="post" class="row g-3 bg-white p-4 rounded shadow-sm" style="max-width: 600px;">
-    <input type="hidden" name="id" value="<?= $id ?>">
-    <div class="col-12">
-        <label class="form-label">Supplier Name</label>
-        <input type="text" name="name" class="form-control" value="<?= old($input, 'name') ?>" required>
-    </div>
-    <div class="col-12">
-        <label class="form-label">Contact Person</label>
-        <input type="text" name="contact_person" class="form-control" value="<?= old($input, 'contact_person') ?>">
-    </div>
-    <div class="col-12">
-        <label class="form-label">Phone</label>
-        <input type="text" name="phone" class="form-control" value="<?= old($input, 'phone') ?>">
-    </div>
-    <div class="col-12">
-        <label class="form-label">Address</label>
-        <input type="text" name="address" class="form-control" value="<?= old($input, 'address') ?>">
-    </div>
-    <div class="col-12">
-        <button type="submit" class="btn btn-primary">Update</button>
-        <a href="<?= BASE_URL ?>/suppliers/index.php" class="btn btn-outline-secondary">Cancel</a>
-    </div>
-</form>
+<div class="card form-card">
+    <form method="post">
+        <input type="hidden" name="id" value="<?= $id ?>">
+        <div class="field">
+            <label>Supplier Name</label>
+            <input type="text" name="name" value="<?= old($input, 'name') ?>" required>
+        </div>
+        <div class="field">
+            <label>Contact Person</label>
+            <input type="text" name="contact_person" value="<?= old($input, 'contact_person') ?>">
+        </div>
+        <div class="field">
+            <label>Phone</label>
+            <input type="text" name="phone" value="<?= old($input, 'phone') ?>">
+        </div>
+        <div class="field">
+            <label>Address</label>
+            <input type="text" name="address" value="<?= old($input, 'address') ?>">
+        </div>
+        <div class="form-actions">
+            <button type="submit" class="btn btn-primary">Update</button>
+            <a href="<?= BASE_URL ?>/suppliers/index.php" class="btn btn-outline">Cancel</a>
+        </div>
+    </form>
+</div>
 
 <?php require __DIR__ . '/../includes/footer.php'; ?>

@@ -2,154 +2,200 @@
 
 require __DIR__ . '/../../bootstrap.php';
 
+use App\Models\Category;
 use App\Models\Product;
 
 $products = (new Product())->search('', null, 'name', 'ASC', 200, 0);
+$categories = (new Category())->all('name');
 
-$pageTitle = 'New Sale - Sari-Sari POS';
+$activeNav = 'pos';
+$pageTitle = 'Checkout - QuickTally';
 require __DIR__ . '/../includes/header.php';
 ?>
 
-<h1 class="mb-4">New Sale</h1>
-
-<div class="row g-4">
-    <div class="col-md-7">
-        <div class="card">
-            <div class="card-header">Available Products</div>
-            <div class="card-body" style="max-height: 520px; overflow-y: auto;">
-                <table class="table table-sm align-middle">
-                    <thead><tr><th>Name</th><th>Price</th><th>Stock</th><th>Qty</th><th></th></tr></thead>
-                    <tbody>
-                        <?php if (empty($products)): ?>
-                            <tr><td colspan="5" class="text-center text-muted">No products available. Add products first.</td></tr>
-                        <?php endif; ?>
-                        <?php foreach ($products as $p): ?>
-                            <tr>
-                                <td><?= htmlspecialchars($p['name']) ?></td>
-                                <td>&#8369;<?= number_format((float) $p['selling_price'], 2) ?></td>
-                                <td><?= (int) $p['stock_quantity'] ?></td>
-                                <td style="width:80px">
-                                    <input type="number" min="1" max="<?= (int) $p['stock_quantity'] ?>" value="1"
-                                           class="form-control form-control-sm" id="qty-<?= $p['id'] ?>"
-                                           <?= (int) $p['stock_quantity'] < 1 ? 'disabled' : '' ?>>
-                                </td>
-                                <td>
-                                    <button type="button" class="btn btn-sm btn-primary"
-                                        <?= (int) $p['stock_quantity'] < 1 ? 'disabled' : '' ?>
-                                        onclick="addToCart(<?= $p['id'] ?>, '<?= htmlspecialchars(addslashes($p['name'])) ?>', <?= (float) $p['selling_price'] ?>, <?= (int) $p['stock_quantity'] ?>)">
-                                        Add
-                                    </button>
-                                </td>
-                            </tr>
-                        <?php endforeach; ?>
-                    </tbody>
-                </table>
-            </div>
+<div class="pos-layout">
+    <div class="pos-main">
+        <div class="search-input-wrap" style="margin-bottom:16px;">
+            <span class="search-icon"><?= navIcon('search') ?></span>
+            <input type="text" id="posSearch" class="search-input" placeholder="Search products or SKU...">
         </div>
+        <div class="pill-group" id="posCategoryPills" style="margin-bottom:20px;">
+            <button type="button" class="pill active" data-category="all">All</button>
+            <?php foreach ($categories as $cat): ?>
+                <button type="button" class="pill" data-category="<?= htmlspecialchars($cat['name']) ?>"><?= htmlspecialchars($cat['name']) ?></button>
+            <?php endforeach; ?>
+        </div>
+
+        <?php if (empty($products)): ?>
+            <p class="empty-text">No products available. Add products first.</p>
+        <?php else: ?>
+            <div class="product-grid" id="posProductGrid">
+                <?php foreach ($products as $p): ?>
+                    <button type="button" class="product-card"
+                        data-id="<?= $p['id'] ?>"
+                        data-name="<?= htmlspecialchars($p['name']) ?>"
+                        data-price="<?= (float) $p['selling_price'] ?>"
+                        data-stock="<?= (int) $p['stock_quantity'] ?>"
+                        data-category="<?= htmlspecialchars($p['category_name'] ?? '') ?>"
+                        data-search="<?= htmlspecialchars(strtolower($p['name'] . ' ' . $p['sku'])) ?>"
+                        <?= (int) $p['stock_quantity'] < 1 ? 'disabled' : '' ?>>
+                        <span class="badge-pill <?= categoryBadgeClass($p['category_name'] ?? null) ?>"><?= htmlspecialchars($p['category_name'] ?? 'Uncategorized') ?></span>
+                        <div class="product-name"><?= htmlspecialchars($p['name']) ?></div>
+                        <div class="product-price">&#8369;<?= number_format((float) $p['selling_price'], 2) ?></div>
+                        <div class="product-stock"><?= (int) $p['stock_quantity'] ?> in stock</div>
+                    </button>
+                <?php endforeach; ?>
+            </div>
+        <?php endif; ?>
     </div>
 
-    <div class="col-md-5">
-        <div class="card">
-            <div class="card-header">Cart</div>
-            <div class="card-body">
-                <table class="table table-sm" id="cartTable">
-                    <thead><tr><th>Item</th><th>Qty</th><th>Subtotal</th><th></th></tr></thead>
-                    <tbody id="cartBody"></tbody>
-                </table>
-                <h5 class="text-end">Total: &#8369;<span id="cartTotal">0.00</span></h5>
-
-                <form method="post" action="<?= BASE_URL ?>/pos/checkout.php" id="checkoutForm">
-                    <div id="hiddenItems"></div>
-                    <div class="mb-2">
-                        <label class="form-label">Amount Paid (&#8369;)</label>
-                        <input type="number" step="0.01" min="0" name="amount_paid" id="amountPaid" class="form-control" required>
-                    </div>
-                    <p>Change: &#8369;<span id="changeDue">0.00</span></p>
-                    <button type="submit" class="btn btn-success w-100" id="checkoutBtn" disabled>Complete Sale</button>
-                </form>
-            </div>
+    <aside class="order-panel">
+        <div class="order-title">Order</div>
+        <div class="order-empty" id="orderEmpty">
+            <?= navIcon('cart') ?>
+            <strong>Cart is empty</strong>
+            <span>Tap a product to add it</span>
         </div>
-    </div>
+        <div class="order-items" id="cartBody"></div>
+
+        <form method="post" action="<?= BASE_URL ?>/pos/checkout.php" id="checkoutForm">
+            <div id="hiddenItems"></div>
+            <div class="order-summary">
+                <div class="order-total-row"><span>Subtotal</span><span>&#8369;<span id="cartTotal">0.00</span></span></div>
+                <div class="field">
+                    <label>Cash Tendered</label>
+                    <input type="number" step="0.01" min="0" name="amount_paid" id="amountPaid" placeholder="0.00">
+                </div>
+                <div class="order-row"><span>Change</span><span>&#8369;<span id="changeDue">0.00</span></span></div>
+                <button type="submit" class="btn btn-primary btn-block" id="checkoutBtn" disabled>Add items to checkout</button>
+            </div>
+        </form>
+    </aside>
 </div>
 
 <script>
-const cart = {};
+var cart = {};
+var grid = document.getElementById('posProductGrid');
+var searchInput = document.getElementById('posSearch');
+var pills = document.querySelectorAll('#posCategoryPills .pill');
+var activeCategory = 'all';
 
-function addToCart(id, name, price, stock) {
-    const qtyInput = document.getElementById('qty-' + id);
-    const qty = parseInt(qtyInput.value, 10) || 1;
-
-    if (qty < 1 || qty > stock) {
-        alert('Invalid quantity. Available stock: ' + stock);
-        return;
-    }
-
-    const existingQty = cart[id] ? cart[id].qty : 0;
-    if (existingQty + qty > stock) {
-        alert('Not enough stock. Available: ' + stock + ', already in cart: ' + existingQty);
-        return;
-    }
-
-    cart[id] = { name: name, price: price, qty: existingQty + qty, stock: stock };
-    renderCart();
+function applyFilters() {
+    if (!grid) return;
+    var term = searchInput.value.trim().toLowerCase();
+    grid.querySelectorAll('.product-card').forEach(function (card) {
+        var matchesCategory = activeCategory === 'all' || card.dataset.category === activeCategory;
+        var matchesSearch = term === '' || card.dataset.search.indexOf(term) !== -1;
+        card.style.display = (matchesCategory && matchesSearch) ? '' : 'none';
+    });
 }
 
-function removeFromCart(id) {
-    delete cart[id];
+pills.forEach(function (pill) {
+    pill.addEventListener('click', function () {
+        pills.forEach(function (p) { p.classList.remove('active'); });
+        pill.classList.add('active');
+        activeCategory = pill.dataset.category;
+        applyFilters();
+    });
+});
+searchInput.addEventListener('input', applyFilters);
+
+if (grid) {
+    grid.querySelectorAll('.product-card').forEach(function (card) {
+        card.addEventListener('click', function () {
+            var id = card.dataset.id;
+            var stock = parseInt(card.dataset.stock, 10);
+            var existing = cart[id] ? cart[id].qty : 0;
+            if (existing + 1 > stock) {
+                alert('Not enough stock. Available: ' + stock);
+                return;
+            }
+            cart[id] = { name: card.dataset.name, price: parseFloat(card.dataset.price), qty: existing + 1, stock: stock };
+            renderCart();
+        });
+    });
+}
+
+function changeQty(id, delta) {
+    if (!cart[id]) return;
+    var next = cart[id].qty + delta;
+    if (next < 1) {
+        delete cart[id];
+    } else if (next > cart[id].stock) {
+        alert('Not enough stock. Available: ' + cart[id].stock);
+        return;
+    } else {
+        cart[id].qty = next;
+    }
     renderCart();
 }
 
 function renderCart() {
-    const body = document.getElementById('cartBody');
-    const hiddenItems = document.getElementById('hiddenItems');
+    var body = document.getElementById('cartBody');
+    var empty = document.getElementById('orderEmpty');
+    var hiddenItems = document.getElementById('hiddenItems');
+    var ids = Object.keys(cart);
     body.innerHTML = '';
     hiddenItems.innerHTML = '';
-    let total = 0;
-    let index = 0;
+    var total = 0;
 
-    for (const id in cart) {
-        const item = cart[id];
-        const subtotal = item.price * item.qty;
+    body.style.display = ids.length === 0 ? 'none' : 'flex';
+    empty.style.display = ids.length === 0 ? 'flex' : 'none';
+
+    ids.forEach(function (id, index) {
+        var item = cart[id];
+        var subtotal = item.price * item.qty;
         total += subtotal;
 
-        const row = document.createElement('tr');
-        row.innerHTML = '<td></td><td></td><td></td><td><button type="button" class="btn btn-sm btn-outline-danger">x</button></td>';
-        row.children[0].textContent = item.name;
-        row.children[1].textContent = item.qty;
-        row.children[2].textContent = '₱' + subtotal.toFixed(2);
-        row.children[3].querySelector('button').addEventListener('click', () => removeFromCart(id));
+        var row = document.createElement('div');
+        row.className = 'order-item';
+        row.innerHTML =
+            '<div>' +
+                '<div class="order-item-name"></div>' +
+                '<div class="order-item-meta"></div>' +
+            '</div>' +
+            '<div class="order-item-actions">' +
+                '<button type="button" class="qty-btn" data-action="dec">&minus;</button>' +
+                '<button type="button" class="qty-btn" data-action="inc">+</button>' +
+                '<button type="button" class="order-item-remove" data-action="remove">&#10005;</button>' +
+            '</div>';
+        row.querySelector('.order-item-name').textContent = item.name;
+        row.querySelector('.order-item-meta').textContent = item.qty + ' × ₱' + item.price.toFixed(2) + ' = ₱' + subtotal.toFixed(2);
+        row.querySelector('[data-action="dec"]').addEventListener('click', function (e) { e.stopPropagation(); changeQty(id, -1); });
+        row.querySelector('[data-action="inc"]').addEventListener('click', function (e) { e.stopPropagation(); changeQty(id, 1); });
+        row.querySelector('[data-action="remove"]').addEventListener('click', function (e) { e.stopPropagation(); delete cart[id]; renderCart(); });
         body.appendChild(row);
 
-        hiddenItems.innerHTML += `
-            <input type="hidden" name="items[${index}][product_id]" value="${id}">
-            <input type="hidden" name="items[${index}][quantity]" value="${item.qty}">
-            <input type="hidden" name="items[${index}][unit_price]" value="${item.price}">
-        `;
-        index++;
-    }
+        hiddenItems.innerHTML +=
+            '<input type="hidden" name="items[' + index + '][product_id]" value="' + id + '">' +
+            '<input type="hidden" name="items[' + index + '][quantity]" value="' + item.qty + '">' +
+            '<input type="hidden" name="items[' + index + '][unit_price]" value="' + item.price + '">';
+    });
 
     document.getElementById('cartTotal').textContent = total.toFixed(2);
-    document.getElementById('checkoutBtn').disabled = (index === 0);
+    document.getElementById('checkoutBtn').disabled = (ids.length === 0);
     updateChange();
 }
 
 function updateChange() {
-    const total = parseFloat(document.getElementById('cartTotal').textContent) || 0;
-    const paid = parseFloat(document.getElementById('amountPaid').value) || 0;
-    const change = paid - total;
+    var total = parseFloat(document.getElementById('cartTotal').textContent) || 0;
+    var paid = parseFloat(document.getElementById('amountPaid').value) || 0;
+    var change = paid - total;
     document.getElementById('changeDue').textContent = change >= 0 ? change.toFixed(2) : '0.00';
 }
 
 document.getElementById('amountPaid').addEventListener('input', updateChange);
 
 document.getElementById('checkoutForm').addEventListener('submit', function (e) {
-    const total = parseFloat(document.getElementById('cartTotal').textContent) || 0;
-    const paid = parseFloat(document.getElementById('amountPaid').value) || 0;
+    var total = parseFloat(document.getElementById('cartTotal').textContent) || 0;
+    var paid = parseFloat(document.getElementById('amountPaid').value) || 0;
     if (paid < total) {
         e.preventDefault();
-        alert('Amount paid is less than the total.');
+        alert('Cash tendered is less than the total.');
     }
 });
+
+renderCart();
 </script>
 
 <?php require __DIR__ . '/../includes/footer.php'; ?>
