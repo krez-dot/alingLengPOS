@@ -49,6 +49,10 @@ CREATE TABLE stock_movements (
 CREATE TABLE sales (
     id INT AUTO_INCREMENT PRIMARY KEY,
     reference_no VARCHAR(30) NOT NULL UNIQUE,
+    subtotal_amount DECIMAL(10,2) NOT NULL DEFAULT 0,
+    discount_type ENUM('none', 'senior', 'pwd') NOT NULL DEFAULT 'none',
+    discount_id_number VARCHAR(50) NULL,
+    discount_amount DECIMAL(10,2) NOT NULL DEFAULT 0,
     total_amount DECIMAL(10,2) NOT NULL DEFAULT 0,
     amount_paid DECIMAL(10,2) NOT NULL DEFAULT 0,
     change_due DECIMAL(10,2) NOT NULL DEFAULT 0,

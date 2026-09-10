@@ -61,16 +61,57 @@ require __DIR__ . '/../includes/header.php';
         <form method="post" action="<?= BASE_URL ?>/pos/checkout.php" id="checkoutForm">
             <div id="hiddenItems"></div>
             <div class="order-summary">
-                <div class="order-total-row"><span>Subtotal</span><span>&#8369;<span id="cartTotal">0.00</span></span></div>
+                <div class="order-row"><span>Subtotal</span><span>&#8369;<span id="cartSubtotal">0.00</span></span></div>
+
+                <label class="discount-toggle">
+                    <span>Senior Citizen / PWD Discount</span>
+                    <input type="checkbox" id="discountToggle">
+                </label>
+                <div class="discount-fields" id="discountFields">
+                    <div class="field">
+                        <label>Type</label>
+                        <select id="discountType" name="discount_type" disabled>
+                            <option value="senior">Senior Citizen</option>
+                            <option value="pwd">PWD</option>
+                        </select>
+                    </div>
+                    <label class="confirm-check">
+                        <input type="checkbox" id="discountConfirmed" name="discount_confirmed" value="1" disabled>
+                        <span>ID presented and verified</span>
+                    </label>
+                </div>
+
+                <div class="order-row discount-row" id="discountRow"><span>Discount (&minus;20%)</span><span>&minus;&#8369;<span id="discountAmountDisplay">0.00</span></span></div>
+
+                <div class="order-total-row"><span>Total</span><span>&#8369;<span id="cartTotal">0.00</span></span></div>
                 <div class="field">
                     <label>Cash Tendered</label>
                     <input type="number" step="0.01" min="0" name="amount_paid" id="amountPaid" placeholder="0.00">
                 </div>
                 <div class="order-row"><span>Change</span><span>&#8369;<span id="changeDue">0.00</span></span></div>
-                <button type="submit" class="btn btn-primary btn-block" id="checkoutBtn" disabled>Add items to checkout</button>
+                <button type="button" class="btn btn-primary btn-block" id="checkoutBtn" disabled>Add items to checkout</button>
             </div>
         </form>
     </aside>
+</div>
+
+<div class="modal-overlay" id="confirmModal">
+    <div class="modal-box">
+        <h3>Confirm Sale</h3>
+        <p class="modal-sub">Review the order before completing the transaction.</p>
+        <div class="order-items" id="modalItems" style="display:flex;max-height:220px;"></div>
+        <div class="modal-summary">
+            <div class="order-row"><span>Subtotal</span><span>&#8369;<span id="modalSubtotal">0.00</span></span></div>
+            <div class="order-row discount-row" id="modalDiscountRow"><span id="modalDiscountLabel">Discount</span><span>&minus;&#8369;<span id="modalDiscountAmount">0.00</span></span></div>
+            <div class="order-total-row"><span>Total</span><span>&#8369;<span id="modalTotal">0.00</span></span></div>
+            <div class="order-row"><span>Cash Tendered</span><span>&#8369;<span id="modalPaid">0.00</span></span></div>
+            <div class="order-row"><span>Change</span><span>&#8369;<span id="modalChange">0.00</span></span></div>
+        </div>
+        <div class="modal-actions">
+            <button type="button" class="btn btn-outline btn-block" id="modalCancel">Cancel</button>
+            <button type="button" class="btn btn-primary btn-block" id="modalConfirm">Confirm Sale</button>
+        </div>
+    </div>
 </div>
 
 <script>
@@ -115,6 +156,23 @@ if (grid) {
         });
     });
 }
+
+var discountToggle = document.getElementById('discountToggle');
+var discountTypeSelect = document.getElementById('discountType');
+var discountConfirmed = document.getElementById('discountConfirmed');
+var discountFields = document.getElementById('discountFields');
+
+discountToggle.addEventListener('change', function () {
+    var checked = discountToggle.checked;
+    discountFields.classList.toggle('open', checked);
+    discountTypeSelect.disabled = !checked;
+    discountConfirmed.disabled = !checked;
+    if (!checked) {
+        discountConfirmed.checked = false;
+    }
+    renderCart();
+});
+discountTypeSelect.addEventListener('change', renderCart);
 
 function changeQty(id, delta) {
     if (!cart[id]) return;
@@ -172,7 +230,14 @@ function renderCart() {
             '<input type="hidden" name="items[' + index + '][unit_price]" value="' + item.price + '">';
     });
 
-    document.getElementById('cartTotal').textContent = total.toFixed(2);
+    var discountEnabled = discountToggle.checked;
+    var discountAmount = discountEnabled ? Math.round(total * 0.20 * 100) / 100 : 0;
+    var grandTotal = total - discountAmount;
+
+    document.getElementById('cartSubtotal').textContent = total.toFixed(2);
+    document.getElementById('discountRow').style.display = discountEnabled ? 'flex' : 'none';
+    document.getElementById('discountAmountDisplay').textContent = discountAmount.toFixed(2);
+    document.getElementById('cartTotal').textContent = grandTotal.toFixed(2);
     document.getElementById('checkoutBtn').disabled = (ids.length === 0);
     updateChange();
 }
@@ -186,13 +251,65 @@ function updateChange() {
 
 document.getElementById('amountPaid').addEventListener('input', updateChange);
 
-document.getElementById('checkoutForm').addEventListener('submit', function (e) {
+var confirmModal = document.getElementById('confirmModal');
+
+document.getElementById('checkoutBtn').addEventListener('click', function () {
     var total = parseFloat(document.getElementById('cartTotal').textContent) || 0;
     var paid = parseFloat(document.getElementById('amountPaid').value) || 0;
-    if (paid < total) {
-        e.preventDefault();
-        alert('Cash tendered is less than the total.');
+
+    if (Object.keys(cart).length === 0) {
+        return;
     }
+    if (discountToggle.checked && !discountConfirmed.checked) {
+        alert('Please confirm the Senior Citizen / PWD ID was presented.');
+        return;
+    }
+    if (paid < total) {
+        alert('Cash tendered is less than the total.');
+        return;
+    }
+
+    openConfirmModal();
+});
+
+function openConfirmModal() {
+    var subtotal = parseFloat(document.getElementById('cartSubtotal').textContent) || 0;
+    var discountAmount = parseFloat(document.getElementById('discountAmountDisplay').textContent) || 0;
+    var total = parseFloat(document.getElementById('cartTotal').textContent) || 0;
+    var paid = parseFloat(document.getElementById('amountPaid').value) || 0;
+    var discountEnabled = discountToggle.checked;
+
+    var itemsBox = document.getElementById('modalItems');
+    itemsBox.innerHTML = '';
+    Object.keys(cart).forEach(function (id) {
+        var item = cart[id];
+        var row = document.createElement('div');
+        row.className = 'order-item';
+        row.innerHTML = '<div><div class="order-item-name"></div><div class="order-item-meta"></div></div>';
+        row.querySelector('.order-item-name').textContent = item.name;
+        row.querySelector('.order-item-meta').textContent = item.qty + ' × ₱' + item.price.toFixed(2);
+        itemsBox.appendChild(row);
+    });
+
+    document.getElementById('modalSubtotal').textContent = subtotal.toFixed(2);
+    document.getElementById('modalDiscountRow').style.display = discountEnabled ? 'flex' : 'none';
+    document.getElementById('modalDiscountLabel').textContent = discountEnabled
+        ? (discountTypeSelect.value === 'pwd' ? 'PWD Discount (-20%)' : 'Senior Citizen Discount (-20%)') + ' — ID presented'
+        : 'Discount';
+    document.getElementById('modalDiscountAmount').textContent = discountAmount.toFixed(2);
+    document.getElementById('modalTotal').textContent = total.toFixed(2);
+    document.getElementById('modalPaid').textContent = paid.toFixed(2);
+    document.getElementById('modalChange').textContent = Math.max(paid - total, 0).toFixed(2);
+
+    confirmModal.classList.add('open');
+}
+
+document.getElementById('modalCancel').addEventListener('click', function () {
+    confirmModal.classList.remove('open');
+});
+
+document.getElementById('modalConfirm').addEventListener('click', function () {
+    document.getElementById('checkoutForm').submit();
 });
 
 renderCart();

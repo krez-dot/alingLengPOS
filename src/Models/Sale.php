@@ -11,10 +11,15 @@ class Sale extends Model
 {
     protected string $table = 'sales';
 
+    public const DISCOUNT_RATE = 0.20;
+
     /**
      * Creates a sale transaction with its line items in a single atomic operation:
      * stock is deducted per item, and the whole sale is rolled back if any item
      * fails (e.g. insufficient stock), so partial/oversold transactions can't occur.
+     *
+     * The Senior Citizen / PWD discount (RA 9994 / RA 10754) is recomputed here from
+     * the subtotal rather than trusted from client input, so it can't be tampered with.
      */
     public function create(array $data): int
     {
@@ -24,17 +29,27 @@ class Sale extends Model
         $this->db->beginTransaction();
 
         try {
-            $total = 0.0;
+            $subtotal = 0.0;
             foreach ($data['items'] as $item) {
-                $total += $item['unit_price'] * $item['quantity'];
+                $subtotal += $item['unit_price'] * $item['quantity'];
             }
 
+            $discountType = in_array($data['discount_type'] ?? 'none', ['senior', 'pwd'], true)
+                ? $data['discount_type']
+                : 'none';
+            $discountAmount = $discountType !== 'none' ? round($subtotal * self::DISCOUNT_RATE, 2) : 0.0;
+            $total = $subtotal - $discountAmount;
+
             $stmt = $this->db->prepare(
-                'INSERT INTO sales (reference_no, total_amount, amount_paid, change_due)
-                 VALUES (:reference_no, :total_amount, :amount_paid, :change_due)'
+                'INSERT INTO sales (reference_no, subtotal_amount, discount_type, discount_id_number, discount_amount, total_amount, amount_paid, change_due)
+                 VALUES (:reference_no, :subtotal_amount, :discount_type, :discount_id_number, :discount_amount, :total_amount, :amount_paid, :change_due)'
             );
             $stmt->execute([
                 'reference_no' => $data['reference_no'],
+                'subtotal_amount' => $subtotal,
+                'discount_type' => $discountType,
+                'discount_id_number' => null,
+                'discount_amount' => $discountAmount,
                 'total_amount' => $total,
                 'amount_paid' => $data['amount_paid'],
                 'change_due' => $data['amount_paid'] - $total,

@@ -23,13 +23,22 @@ foreach ($_POST['items'] as $item) {
 }
 
 $amountPaid = (float) ($_POST['amount_paid'] ?? 0);
+$discountType = in_array($_POST['discount_type'] ?? 'none', ['senior', 'pwd'], true) ? $_POST['discount_type'] : 'none';
+$discountConfirmed = ($_POST['discount_confirmed'] ?? '') === '1';
 
 if (empty($items)) {
     flash('danger', 'No valid items in cart.');
     redirect('/pos/index.php');
 }
 
-$total = array_reduce($items, fn ($carry, $item) => $carry + $item['quantity'] * $item['unit_price'], 0.0);
+if ($discountType !== 'none' && !$discountConfirmed) {
+    flash('danger', 'Please confirm the Senior Citizen / PWD ID was presented to apply the discount.');
+    redirect('/pos/index.php');
+}
+
+$subtotal = array_reduce($items, fn ($carry, $item) => $carry + $item['quantity'] * $item['unit_price'], 0.0);
+$discountAmount = $discountType !== 'none' ? round($subtotal * Sale::DISCOUNT_RATE, 2) : 0.0;
+$total = $subtotal - $discountAmount;
 
 if ($amountPaid < $total) {
     flash('danger', 'Amount paid is less than the total due.');
@@ -41,6 +50,7 @@ try {
         'reference_no' => 'TXN-' . date('YmdHis') . '-' . random_int(100, 999),
         'items' => $items,
         'amount_paid' => $amountPaid,
+        'discount_type' => $discountType,
     ]);
 
     flash('success', 'Sale completed successfully.');

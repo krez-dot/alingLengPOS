@@ -40,6 +40,13 @@ require __DIR__ . '/../includes/header.php';
         </tbody>
     </table>
     <div class="receipt-summary">
+        <div class="order-row"><span>Subtotal</span><span>&#8369;<?= number_format((float) $sale['subtotal_amount'], 2) ?></span></div>
+        <?php if ($sale['discount_type'] !== 'none'): ?>
+            <div class="order-row" style="color:var(--red-600);">
+                <span><?= $sale['discount_type'] === 'pwd' ? 'PWD' : 'Senior Citizen' ?> Discount (&minus;20%) &mdash; ID presented</span>
+                <span>&minus;&#8369;<?= number_format((float) $sale['discount_amount'], 2) ?></span>
+            </div>
+        <?php endif; ?>
         <div class="order-row"><span>Total</span><strong>&#8369;<?= number_format((float) $sale['total_amount'], 2) ?></strong></div>
         <div class="order-row"><span>Amount Paid</span><span>&#8369;<?= number_format((float) $sale['amount_paid'], 2) ?></span></div>
         <div class="order-row"><span>Change</span><span>&#8369;<?= number_format((float) $sale['change_due'], 2) ?></span></div>

@@ -62,7 +62,12 @@ require __DIR__ . '/../includes/header.php';
             <?php endif; ?>
             <?php foreach ($sales as $sale): ?>
                 <tr class="clickable-row" onclick="window.location='<?= BASE_URL ?>/sales/view.php?id=<?= $sale['id'] ?>'">
-                    <td class="strong"><?= htmlspecialchars($sale['reference_no']) ?></td>
+                    <td class="strong">
+                        <?= htmlspecialchars($sale['reference_no']) ?>
+                        <?php if ($sale['discount_type'] !== 'none'): ?>
+                            <span class="badge-pill badge-purple"><?= $sale['discount_type'] === 'pwd' ? 'PWD' : 'SC' ?> -20%</span>
+                        <?php endif; ?>
+                    </td>
                     <td class="muted"><?= htmlspecialchars($sale['created_at']) ?></td>
                     <td>Walk-in</td>
                     <td>Admin</td>
