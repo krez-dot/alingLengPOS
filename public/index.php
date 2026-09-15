@@ -18,7 +18,7 @@ $recentSales = $saleModel->history('', '', '', 'DESC', 5, 0);
 $topSelling = $saleModel->topSelling(5);
 
 $activeNav = 'dashboard';
-$pageTitle = 'Dashboard - QuickTally';
+$pageTitle = "Dashboard - Aling Leng's Sari-Sari Store";
 require __DIR__ . '/includes/header.php';
 ?>
 

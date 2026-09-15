@@ -16,7 +16,7 @@ if (!$sale) {
 $items = $saleModel->itemsFor($saleId);
 
 $activeNav = 'sales';
-$pageTitle = 'Sale Receipt - QuickTally';
+$pageTitle = "Sale Receipt - Aling Leng's Sari-Sari Store";
 require __DIR__ . '/../includes/header.php';
 ?>
 

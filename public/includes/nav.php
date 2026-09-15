@@ -13,8 +13,8 @@ $active = $activeNav ?? '';
     <a href="<?= BASE_URL ?>/index.php" class="brand">
         <span class="brand-icon"><?= navIcon('bag') ?></span>
         <span class="brand-text">
-            <span class="brand-name">QuickTally</span>
-            <span class="brand-sub">Grocery POS</span>
+            <span class="brand-name">Aling Leng's</span>
+            <span class="brand-sub">Sari-Sari Store POS</span>
         </span>
     </a>
     <nav>

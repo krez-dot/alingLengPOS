@@ -16,7 +16,7 @@ $offset = ($page - 1) * $perPage;
 $sales = $saleModel->history($keyword, $dateFrom, $dateTo, $order, $perPage, $offset);
 
 $activeNav = 'sales';
-$pageTitle = 'Sales History - QuickTally';
+$pageTitle = "Sales History - Aling Leng's Sari-Sari Store";
 require __DIR__ . '/../includes/header.php';
 ?>
 

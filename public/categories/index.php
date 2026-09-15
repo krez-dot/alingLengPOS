@@ -7,7 +7,7 @@ use App\Models\Category;
 $categories = (new Category())->all('name');
 
 $activeNav = 'categories';
-$pageTitle = 'Categories - QuickTally';
+$pageTitle = "Categories - Aling Leng's Sari-Sari Store";
 require __DIR__ . '/../includes/header.php';
 ?>
 

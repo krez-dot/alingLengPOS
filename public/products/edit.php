@@ -66,7 +66,7 @@ $categories = (new Category())->all('name');
 $suppliers = (new Supplier())->all('name');
 
 $activeNav = 'products';
-$pageTitle = 'Edit Product - QuickTally';
+$pageTitle = "Edit Product - Aling Leng's Sari-Sari Store";
 require __DIR__ . '/../includes/header.php';
 ?>
 

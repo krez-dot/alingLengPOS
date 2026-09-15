@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title><?= htmlspecialchars($pageTitle ?? 'QuickTally') ?></title>
+    <title><?= htmlspecialchars($pageTitle ?? "Aling Leng's Sari-Sari Store") ?></title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
     <link href="<?= BASE_URL ?>/assets/css/style.css" rel="stylesheet">
@@ -15,7 +15,7 @@
     <div class="main-content">
         <div class="mobile-topbar">
             <button type="button" class="icon-btn" id="sidebarToggle" aria-label="Toggle menu"><?= navIcon('menu') ?></button>
-            <span class="brand-name">QuickTally</span>
+            <span class="brand-name">Aling Leng's</span>
         </div>
         <?php if (!empty($_SESSION['flash'])): ?>
             <div class="alert alert-<?= htmlspecialchars($_SESSION['flash']['type']) ?>">

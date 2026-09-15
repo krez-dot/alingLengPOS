@@ -25,7 +25,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 }
 
 $activeNav = 'categories';
-$pageTitle = 'Add Category - QuickTally';
+$pageTitle = "Add Category - Aling Leng's Sari-Sari Store";
 require __DIR__ . '/../includes/header.php';
 ?>
 

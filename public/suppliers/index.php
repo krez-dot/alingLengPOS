@@ -7,7 +7,7 @@ use App\Models\Supplier;
 $suppliers = (new Supplier())->all('name');
 
 $activeNav = 'suppliers';
-$pageTitle = 'Suppliers - QuickTally';
+$pageTitle = "Suppliers - Aling Leng's Sari-Sari Store";
 require __DIR__ . '/../includes/header.php';
 ?>
 

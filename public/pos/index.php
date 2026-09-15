@@ -9,7 +9,7 @@ $products = (new Product())->search('', null, 'name', 'ASC', 200, 0);
 $categories = (new Category())->all('name');
 
 $activeNav = 'pos';
-$pageTitle = 'Checkout - QuickTally';
+$pageTitle = "Checkout - Aling Leng's Sari-Sari Store";
 require __DIR__ . '/../includes/header.php';
 ?>
 

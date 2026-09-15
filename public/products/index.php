@@ -22,7 +22,7 @@ $totalPages = (int) ceil($totalProducts / $perPage);
 $categories = $categoryModel->all('name');
 
 $activeNav = 'products';
-$pageTitle = 'Products - QuickTally';
+$pageTitle = "Products - Aling Leng's Sari-Sari Store";
 require __DIR__ . '/../includes/header.php';
 ?>
 

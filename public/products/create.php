@@ -58,7 +58,7 @@ $categories = (new Category())->all('name');
 $suppliers = (new Supplier())->all('name');
 
 $activeNav = 'products';
-$pageTitle = 'Add Product - QuickTally';
+$pageTitle = "Add Product - Aling Leng's Sari-Sari Store";
 require __DIR__ . '/../includes/header.php';
 ?>
 
