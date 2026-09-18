@@ -524,10 +524,11 @@ a {
     flex-wrap: wrap;
 }
 
-.color-swatch {
+.color-swatch-group .color-swatch {
     position: relative;
     width: 36px;
     height: 36px;
+    margin: 0;
     border-radius: 50%;
     background: var(--swatch-bg);
     border: 2px solid transparent;
@@ -535,10 +536,12 @@ a {
     display: flex;
     align-items: center;
     justify-content: center;
+    text-transform: none;
+    letter-spacing: normal;
     transition: border-color 0.15s, transform 0.1s;
 }
 
-.color-swatch input {
+.color-swatch-group .color-swatch input {
     position: absolute;
     inset: 0;
     opacity: 0;
@@ -546,20 +549,20 @@ a {
     cursor: pointer;
 }
 
-.color-swatch:has(input:checked) {
+.color-swatch-group .color-swatch:has(input:checked) {
     border-color: var(--swatch-fg);
     box-shadow: 0 0 0 2px #fff inset;
     transform: scale(1.08);
 }
 
-.color-swatch:has(input:checked)::after {
+.color-swatch-group .color-swatch:has(input:checked)::after {
     content: '\2713';
     color: var(--swatch-fg);
     font-size: 0.95rem;
     font-weight: 700;
 }
 
-.color-swatch-auto {
+.color-swatch-group .color-swatch-auto {
     width: auto;
     height: 36px;
     padding: 0 14px;
@@ -570,13 +573,13 @@ a {
     font-weight: 600;
 }
 
-.color-swatch-auto:has(input:checked) {
+.color-swatch-group .color-swatch-auto:has(input:checked) {
     border-color: #57544d;
     box-shadow: none;
     transform: none;
 }
 
-.color-swatch-auto:has(input:checked)::after {
+.color-swatch-group .color-swatch-auto:has(input:checked)::after {
     content: none;
 }
 
