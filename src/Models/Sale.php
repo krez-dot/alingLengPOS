@@ -159,6 +159,35 @@ class Sale extends Model
             ->fetchColumn();
     }
 
+    /**
+     * Daily sales totals for the last N days (including today), oldest first,
+     * with days that had no sales filled in as zero so the series has no gaps.
+     */
+    public function dailyTotals(int $days = 7): array
+    {
+        $stmt = $this->db->prepare(
+            'SELECT DATE(created_at) AS day, COALESCE(SUM(total_amount), 0) AS total
+             FROM sales
+             WHERE created_at >= :from
+             GROUP BY DATE(created_at)'
+        );
+        $stmt->bindValue(':from', date('Y-m-d 00:00:00', strtotime('-' . ($days - 1) . ' days')));
+        $stmt->execute();
+
+        $byDate = [];
+        foreach ($stmt->fetchAll() as $row) {
+            $byDate[$row['day']] = (float) $row['total'];
+        }
+
+        $series = [];
+        for ($i = $days - 1; $i >= 0; $i--) {
+            $date = date('Y-m-d', strtotime("-{$i} days"));
+            $series[] = ['date' => $date, 'total' => $byDate[$date] ?? 0.0];
+        }
+
+        return $series;
+    }
+
     public function topSelling(int $limit = 5): array
     {
         $stmt = $this->db->prepare(

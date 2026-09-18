@@ -16,6 +16,7 @@ $todayTotal = $saleModel->todayTotal();
 $todayCount = $saleModel->todayCount();
 $recentSales = $saleModel->history('', '', '', 'DESC', 5, 0);
 $topSelling = $saleModel->topSelling(5);
+$salesTrend = $saleModel->dailyTotals(7);
 
 $activeNav = 'dashboard';
 $pageTitle = "Dashboard - Aling Leng's Sari-Sari Store";
@@ -48,6 +49,11 @@ require __DIR__ . '/includes/header.php';
         <div class="stat-value"><?= count($lowStockItems) ?></div>
         <div class="stat-sub">At or below reorder level</div>
     </div>
+</div>
+
+<div class="card" style="margin-bottom:16px;">
+    <div class="card-header-row"><strong>Sales &mdash; Last 7 Days</strong></div>
+    <canvas id="salesTrendChart" height="90"></canvas>
 </div>
 
 <div class="dash-grid">
@@ -106,5 +112,52 @@ require __DIR__ . '/includes/header.php';
         </ul>
     <?php endif; ?>
 </div>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.4/dist/chart.umd.min.js"></script>
+<script>
+var salesTrend = <?= json_encode($salesTrend) ?>;
+
+Chart.defaults.font.family = "'Poppins', sans-serif";
+
+new Chart(document.getElementById('salesTrendChart'), {
+    type: 'line',
+    data: {
+        labels: salesTrend.map(function (d) {
+            var date = new Date(d.date + 'T00:00:00');
+            return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+        }),
+        datasets: [{
+            label: 'Sales',
+            data: salesTrend.map(function (d) { return d.total; }),
+            borderColor: '#16a34a',
+            backgroundColor: 'rgba(22, 163, 74, 0.12)',
+            fill: true,
+            tension: 0.35,
+            pointBackgroundColor: '#16a34a',
+            pointRadius: 4,
+            borderWidth: 2,
+        }]
+    },
+    options: {
+        responsive: true,
+        plugins: {
+            legend: { display: false },
+            tooltip: {
+                callbacks: {
+                    label: function (ctx) { return '₱' + ctx.parsed.y.toFixed(2); }
+                }
+            }
+        },
+        scales: {
+            y: {
+                beginAtZero: true,
+                ticks: { callback: function (v) { return '₱' + v; } },
+                grid: { color: '#f1efe9' }
+            },
+            x: { grid: { display: false } }
+        }
+    }
+});
+</script>
 
 <?php require __DIR__ . '/includes/footer.php'; ?>
