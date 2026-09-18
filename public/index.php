@@ -74,7 +74,7 @@ require __DIR__ . '/includes/header.php';
     <div class="card">
         <div class="card-header-row">
             <strong>&#9888;&#65039; Low Stock</strong>
-            <span class="badge-pill <?= empty($lowStockItems) ? 'badge-ok' : 'badge-low' ?>"><?= count($lowStockItems) ?> items</span>
+            <span class="badge-pill <?= empty($lowStockItems) ? 'badge-ok' : 'badge-low' ?>"><?= count($lowStockItems) ?> item<?= count($lowStockItems) === 1 ? '' : 's' ?></span>
         </div>
         <?php if (empty($lowStockItems)): ?>
             <p class="empty-text">All products are above their reorder level.</p>
