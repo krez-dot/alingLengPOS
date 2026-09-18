@@ -1,0 +1,10 @@
+{
+    "name": "alingleng/pos-system",
+    "description": "Aling Leng's Sari-Sari Store POS System",
+    "type": "project",
+    "require": {
+        "php": ">=8.1",
+        "ext-pdo": "*",
+        "ext-pdo_mysql": "*"
+    }
+}

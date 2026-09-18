@@ -56,6 +56,14 @@ Built with native PHP (OOP) and MySQL (PDO, prepared statements). No framework y
     └── includes/           # Shared header/nav/footer
 ```
 
+## Deployment (Railway)
+
+1. Push this repo to GitHub and create a new Railway project from it.
+2. Add a MySQL plugin to the Railway project (Railway auto-injects `MYSQLHOST`, `MYSQLPORT`, `MYSQLUSER`, `MYSQLPASSWORD`, `MYSQLDATABASE` into the app service — `config/database.php` reads these automatically).
+3. Open the MySQL plugin's query console (or connect with a MySQL client using its credentials) and run `database/schema.sql` to create the tables and seed data.
+4. Railway builds with Nixpacks and starts the app via `railway.json` (`php -S 0.0.0.0:$PORT -t public`), so no further web server config is needed.
+5. Once deployed, Railway assigns a public URL — the app works at the domain root (no subfolder), same as the built-in PHP server setup above.
+
 ## Roadmap (Final Term)
 - User authentication & Role-Based Access Control (Admin/Cashier)
 - SQL injection / CSRF protections, secure logout
