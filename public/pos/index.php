@@ -39,7 +39,7 @@ require __DIR__ . '/../includes/header.php';
                         data-category="<?= htmlspecialchars($p['category_name'] ?? '') ?>"
                         data-search="<?= htmlspecialchars(strtolower($p['name'] . ' ' . $p['sku'])) ?>"
                         <?= (int) $p['stock_quantity'] < 1 ? 'disabled' : '' ?>>
-                        <span class="badge-pill <?= categoryBadgeClass($p['category_name'] ?? null) ?>"><?= htmlspecialchars($p['category_name'] ?? 'Uncategorized') ?></span>
+                        <span class="badge-pill <?= categoryBadgeClass($p['category_name'] ?? null, $p['category_color'] ?? null) ?>"><?= htmlspecialchars($p['category_name'] ?? 'Uncategorized') ?></span>
                         <div class="product-name"><?= htmlspecialchars($p['name']) ?></div>
                         <div class="product-price">&#8369;<?= number_format((float) $p['selling_price'], 2) ?></div>
                         <div class="product-stock"><?= (int) $p['stock_quantity'] ?> in stock</div>

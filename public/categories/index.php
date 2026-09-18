@@ -28,7 +28,7 @@ require __DIR__ . '/../includes/header.php';
             <?php endif; ?>
             <?php foreach ($categories as $cat): ?>
                 <tr>
-                    <td><span class="badge-pill <?= categoryBadgeClass($cat['name']) ?>"><?= htmlspecialchars($cat['name']) ?></span></td>
+                    <td><span class="badge-pill <?= categoryBadgeClass($cat['name'], $cat['color'] ?? null) ?>"><?= htmlspecialchars($cat['name']) ?></span></td>
                     <td class="muted"><?= htmlspecialchars($cat['created_at']) ?></td>
                     <td class="actions-cell">
                         <a href="<?= BASE_URL ?>/categories/edit.php?id=<?= $cat['id'] ?>" class="btn btn-outline btn-sm">Edit</a>

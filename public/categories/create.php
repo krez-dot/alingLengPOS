@@ -15,7 +15,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     if (empty($errors)) {
         try {
-            (new Category())->create(['name' => trim($input['name'])]);
+            (new Category())->create([
+                'name' => trim($input['name']),
+                'color' => $input['color'] ?? '',
+            ]);
             flash('success', 'Category added.');
             redirect('/categories/index.php');
         } catch (\PDOException $e) {
@@ -45,6 +48,10 @@ require __DIR__ . '/../includes/header.php';
         <div class="field">
             <label>Category Name</label>
             <input type="text" name="name" value="<?= old($input, 'name') ?>" required>
+        </div>
+        <div class="field">
+            <label>Badge Color</label>
+            <?= colorSwatchPicker($input['color'] ?? '') ?>
         </div>
         <div class="form-actions">
             <button type="submit" class="btn btn-primary">Save</button>

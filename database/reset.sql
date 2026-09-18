@@ -15,8 +15,8 @@ TRUNCATE TABLE suppliers;
 TRUNCATE TABLE categories;
 SET FOREIGN_KEY_CHECKS = 1;
 
-INSERT INTO categories (name) VALUES
-('Beverages'), ('Snacks'), ('Canned Goods'), ('Personal Care'), ('Household');
+INSERT INTO categories (name, color) VALUES
+('Beverages', 'blue'), ('Snacks', 'yellow'), ('Canned Goods', 'teal'), ('Personal Care', 'purple'), ('Household', 'orange');
 
 INSERT INTO suppliers (name, contact_person, phone, address) VALUES
 ('Coca-Cola Bottlers Phils.', 'Juan Dela Cruz', '0917-123-4567', 'Tarlac City'),

@@ -66,7 +66,7 @@ class Product extends Model
         }
         $direction = strtoupper($direction) === 'DESC' ? 'DESC' : 'ASC';
 
-        $sql = 'SELECT p.*, c.name AS category_name, s.name AS supplier_name
+        $sql = 'SELECT p.*, c.name AS category_name, c.color AS category_color, s.name AS supplier_name
                 FROM products p
                 LEFT JOIN categories c ON p.category_id = c.id
                 LEFT JOIN suppliers s ON p.supplier_id = s.id

@@ -65,7 +65,7 @@ require __DIR__ . '/../includes/header.php';
                 <tr>
                     <td class="muted"><?= htmlspecialchars($product['sku']) ?></td>
                     <td class="strong"><?= htmlspecialchars($product['name']) ?></td>
-                    <td><span class="badge-pill <?= categoryBadgeClass($product['category_name'] ?? null) ?>"><?= htmlspecialchars($product['category_name'] ?? '-') ?></span></td>
+                    <td><span class="badge-pill <?= categoryBadgeClass($product['category_name'] ?? null, $product['category_color'] ?? null) ?>"><?= htmlspecialchars($product['category_name'] ?? '-') ?></span></td>
                     <td class="price-cell">&#8369;<?= number_format((float) $product['selling_price'], 2) ?></td>
                     <td>
                         <?= (int) $product['stock_quantity'] ?> units

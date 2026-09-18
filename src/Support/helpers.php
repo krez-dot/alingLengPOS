@@ -19,8 +19,12 @@ function old(array $data, string $key, string $default = ''): string
     return htmlspecialchars((string) ($data[$key] ?? $default));
 }
 
-function categoryBadgeClass(?string $name): string
+function categoryBadgeClass(?string $name, ?string $color = null): string
 {
+    if ($color !== null && $color !== '') {
+        return 'badge-' . $color;
+    }
+
     if ($name === null || $name === '') {
         return 'badge-default';
     }
@@ -28,6 +32,31 @@ function categoryBadgeClass(?string $name): string
     $palette = ['badge-blue', 'badge-orange', 'badge-purple', 'badge-yellow', 'badge-teal', 'badge-pink'];
 
     return $palette[crc32(strtolower($name)) % count($palette)];
+}
+
+function colorSwatchPicker(string $selected = ''): string
+{
+    $colors = [
+        'blue' => ['#dbeafe', '#1d4ed8'],
+        'orange' => ['#ffe4d5', '#c2410c'],
+        'purple' => ['#ede9fe', '#7c3aed'],
+        'yellow' => ['#fef3c7', '#b45309'],
+        'teal' => ['#ccfbf1', '#0f766e'],
+        'pink' => ['#fce7f3', '#be185d'],
+    ];
+
+    $html = '<div class="color-swatch-group">';
+    foreach ($colors as $key => [$bg, $fg]) {
+        $checked = $selected === $key ? 'checked' : '';
+        $html .= '<label class="color-swatch" style="--swatch-bg:' . $bg . ';--swatch-fg:' . $fg . ';" title="' . ucfirst($key) . '">'
+            . '<input type="radio" name="color" value="' . $key . '" ' . $checked . '>'
+            . '</label>';
+    }
+    $autoChecked = $selected === '' ? 'checked' : '';
+    $html .= '<label class="color-swatch color-swatch-auto" title="Auto"><input type="radio" name="color" value="" ' . $autoChecked . '><span>Auto</span></label>';
+    $html .= '</div>';
+
+    return $html;
 }
 
 function navIcon(string $name): string

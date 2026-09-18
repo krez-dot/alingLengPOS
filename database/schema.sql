@@ -8,6 +8,7 @@ USE sarisari_pos;
 CREATE TABLE categories (
     id INT AUTO_INCREMENT PRIMARY KEY,
     name VARCHAR(100) NOT NULL UNIQUE,
+    color ENUM('blue', 'orange', 'purple', 'yellow', 'teal', 'pink') NULL,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 ) ENGINE=InnoDB;
 
@@ -71,8 +72,8 @@ CREATE TABLE sale_items (
 ) ENGINE=InnoDB;
 
 -- Seed data
-INSERT INTO categories (name) VALUES
-('Beverages'), ('Snacks'), ('Canned Goods'), ('Personal Care'), ('Household');
+INSERT INTO categories (name, color) VALUES
+('Beverages', 'blue'), ('Snacks', 'yellow'), ('Canned Goods', 'teal'), ('Personal Care', 'purple'), ('Household', 'orange');
 
 INSERT INTO suppliers (name, contact_person, phone, address) VALUES
 ('Coca-Cola Bottlers Phils.', 'Juan Dela Cruz', '0917-123-4567', 'Tarlac City'),
