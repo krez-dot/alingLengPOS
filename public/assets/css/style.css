@@ -747,9 +747,8 @@ a {
 
 .form-with-preview {
     display: grid;
-    grid-template-columns: minmax(0, 680px) 260px;
+    grid-template-columns: minmax(0, 680px) 300px;
     gap: 24px;
-    align-items: start;
 }
 
 @media (max-width: 820px) {
@@ -759,25 +758,32 @@ a {
 }
 
 .preview-card {
-    position: sticky;
-    top: 24px;
+    display: flex;
+    flex-direction: column;
 }
 
-.preview-card .badge-pill {
-    font-size: 0.85rem;
-    padding: 7px 16px;
+.preview-card .card-header-row {
+    margin-bottom: 20px;
+}
+
+.preview-card .preview-body {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    gap: 14px;
+    padding: 12px 0;
 }
 
 .preview-card .empty-text {
     padding: 0;
 }
 
-.preview-card .empty-text:first-of-type {
-    margin-bottom: 16px;
-}
-
-.preview-card #colorPreviewNote {
-    margin-top: 12px;
+.preview-card .badge-pill {
+    font-size: 0.92rem;
+    padding: 8px 20px;
 }
 
 .form-actions {

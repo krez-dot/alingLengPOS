@@ -63,9 +63,11 @@ require __DIR__ . '/../includes/header.php';
 
     <div class="card preview-card">
         <div class="card-header-row"><strong>Preview</strong></div>
-        <p class="empty-text">This is how it'll look on Products and Checkout.</p>
-        <span class="badge-pill badge-default" id="colorPreviewBadge">Category Name</span>
-        <p class="empty-text" id="colorPreviewNote">Auto-assigned once saved.</p>
+        <div class="preview-body">
+            <p class="empty-text">This is how it'll look on Products and Checkout.</p>
+            <span class="badge-pill badge-default" id="colorPreviewBadge">Category Name</span>
+            <p class="empty-text" id="colorPreviewNote">Auto-assigned once saved.</p>
+        </div>
     </div>
 </div>
 
