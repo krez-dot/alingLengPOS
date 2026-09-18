@@ -745,6 +745,16 @@ a {
     max-width: 680px;
 }
 
+.page-centered {
+    max-width: 680px;
+    margin: 0 auto;
+}
+
+.page-centered-wide {
+    max-width: 1004px;
+    margin: 0 auto;
+}
+
 .form-with-preview {
     display: grid;
     grid-template-columns: minmax(0, 680px) 300px;

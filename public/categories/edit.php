@@ -41,6 +41,7 @@ $pageTitle = "Edit Category - Aling Leng's Sari-Sari Store";
 require __DIR__ . '/../includes/header.php';
 ?>
 
+<div class="page-centered-wide">
 <div class="page-header">
     <h1>Edit Category</h1>
     <p>Categories help organize the product catalog and checkout filters.</p>
@@ -79,6 +80,7 @@ require __DIR__ . '/../includes/header.php';
             <p class="empty-text" id="colorPreviewNote">Auto-assigned once saved.</p>
         </div>
     </div>
+</div>
 </div>
 
 <script>

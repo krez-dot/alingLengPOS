@@ -70,6 +70,7 @@ $pageTitle = "Edit Product - Aling Leng's Sari-Sari Store";
 require __DIR__ . '/../includes/header.php';
 ?>
 
+<div class="page-centered">
 <div class="page-header">
     <h1>Edit Product</h1>
     <p>Product details are visible to cashiers on the checkout screen.</p>
@@ -141,6 +142,7 @@ require __DIR__ . '/../includes/header.php';
             <a href="<?= BASE_URL ?>/products/index.php" class="btn btn-outline">Cancel</a>
         </div>
     </form>
+</div>
 </div>
 
 <?php require __DIR__ . '/../includes/footer.php'; ?>

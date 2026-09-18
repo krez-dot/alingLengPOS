@@ -30,6 +30,7 @@ $pageTitle = "Add Supplier - Aling Leng's Sari-Sari Store";
 require __DIR__ . '/../includes/header.php';
 ?>
 
+<div class="page-centered">
 <div class="page-header">
     <h1>Add Supplier</h1>
     <p>Keep supplier contact details handy for reordering stock.</p>
@@ -64,6 +65,7 @@ require __DIR__ . '/../includes/header.php';
             <a href="<?= BASE_URL ?>/suppliers/index.php" class="btn btn-outline">Cancel</a>
         </div>
     </form>
+</div>
 </div>
 
 <?php require __DIR__ . '/../includes/footer.php'; ?>
