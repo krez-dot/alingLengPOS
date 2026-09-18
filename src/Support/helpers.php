@@ -34,6 +34,22 @@ function categoryBadgeClass(?string $name, ?string $color = null): string
     return $palette[crc32(strtolower($name)) % count($palette)];
 }
 
+function categoryLegend(array $categories): string
+{
+    if (empty($categories)) {
+        return '';
+    }
+
+    $html = '<div class="category-legend"><span class="category-legend-label">Categories:</span>';
+    foreach ($categories as $cat) {
+        $html .= '<span class="badge-pill ' . categoryBadgeClass($cat['name'], $cat['color'] ?? null) . '">'
+            . htmlspecialchars($cat['name']) . '</span>';
+    }
+    $html .= '</div>';
+
+    return $html;
+}
+
 function colorSwatchPicker(string $selected = ''): string
 {
     $colors = [

@@ -26,6 +26,8 @@ require __DIR__ . '/../includes/header.php';
             <?php endforeach; ?>
         </div>
 
+        <?= categoryLegend($categories) ?>
+
         <?php if (empty($products)): ?>
             <p class="empty-text">No products available. Add products first.</p>
         <?php else: ?>

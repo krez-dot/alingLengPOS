@@ -52,6 +52,8 @@ require __DIR__ . '/../includes/header.php';
     </select>
 </form>
 
+<?= categoryLegend($categories) ?>
+
 <div class="table-wrap">
     <table class="data-table">
         <thead>
