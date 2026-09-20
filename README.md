@@ -11,9 +11,11 @@ Built with native PHP (OOP) and MySQL (PDO, prepared statements). No framework y
 ### Features
 - Product, category, and supplier management (full CRUD)
 - Searchable, filterable, sortable product listing (`WHERE`, `ORDER BY`, `LIMIT`)
+- Customizable category badge colors (six-color swatch picker, falls back to an automatic hash-based color) plus a legend on Products/Checkout
 - Point-of-sale transaction screen — cart-based checkout with server-side stock validation
-- Sales history and receipt view
-- Dashboard with today's sales total, transaction count, and low-stock alerts
+- Senior Citizen / PWD discount at checkout (RA 9994 / RA 10754, 20% off), recomputed server-side from the cart subtotal and gated behind an "ID presented and verified" confirmation, with a confirm-sale review step before finalizing
+- Sales history and receipt view, with date/keyword filtering and sort order
+- Dashboard with today's sales total, transaction count, low-stock alerts, top-selling products, and a 7-day sales trend chart
 - OOP core: abstract `Model` base class; `Product`, `Category`, `Supplier`, `Sale`, `StockMovement` subclasses; custom `InsufficientStockException` guarding the stock-deduction operation during checkout
 
 ## Requirements
@@ -65,8 +67,9 @@ Built with native PHP (OOP) and MySQL (PDO, prepared statements). No framework y
 5. Once deployed, Railway assigns a public URL — the app works at the domain root (no subfolder), same as the built-in PHP server setup above.
 
 ## Roadmap (Final Term)
-- User authentication & Role-Based Access Control (Admin/Cashier)
-- SQL injection / CSRF protections, secure logout
+- User authentication & Role-Based Access Control (Admin/Cashier) — the sidebar's "Admin User" and "Log out" are currently static placeholders with no real session/login behind them
+- Real Customer/Cashier attribution on sales — Sales History currently shows every row as "Walk-in" / "Admin" since there's no logged-in user or customer record to attach yet
+- CSRF protection and secure logout (SQL injection is already mitigated project-wide via PDO prepared statements)
 - RESTful API for products/sales, tested and documented with Postman
 - Laravel module migration (MVC structure, migrations/seeders, Eloquent relationships)
-- Sales/inventory analytics report
+- Deeper sales/inventory analytics — date-range reports, exportable data, profit margin using `cost_price` (today's dashboard chart only covers a rolling 7 days)
