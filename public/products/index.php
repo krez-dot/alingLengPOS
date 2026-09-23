@@ -45,14 +45,16 @@ require __DIR__ . '/../includes/header.php';
             <button type="submit" name="category_id" value="<?= $cat['id'] ?>" class="pill <?= $categoryId === (int) $cat['id'] ? 'active' : '' ?>"><?= htmlspecialchars($cat['name']) ?></button>
         <?php endforeach; ?>
     </div>
-    <select name="sort" class="sort-select" onchange="this.form.submit()">
-        <option value="name" <?= $sortBy === 'name' ? 'selected' : '' ?>>Sort: Name</option>
-        <option value="selling_price" <?= $sortBy === 'selling_price' ? 'selected' : '' ?>>Sort: Price</option>
-        <option value="stock_quantity" <?= $sortBy === 'stock_quantity' ? 'selected' : '' ?>>Sort: Stock</option>
-    </select>
-    <button type="submit" name="dir" value="<?= $direction === 'ASC' ? 'DESC' : 'ASC' ?>" class="sort-dir-toggle" title="Toggle sort direction">
-        <?= $direction === 'ASC' ? '&uarr; Asc' : '&darr; Desc' ?>
-    </button>
+    <div class="sort-control-group">
+        <select name="sort" class="sort-select" onchange="this.form.submit()">
+            <option value="name" <?= $sortBy === 'name' ? 'selected' : '' ?>>Sort: Name</option>
+            <option value="selling_price" <?= $sortBy === 'selling_price' ? 'selected' : '' ?>>Sort: Price</option>
+            <option value="stock_quantity" <?= $sortBy === 'stock_quantity' ? 'selected' : '' ?>>Sort: Stock</option>
+        </select>
+        <button type="submit" name="dir" value="<?= $direction === 'ASC' ? 'DESC' : 'ASC' ?>" class="sort-dir-toggle" title="Toggle sort direction">
+            <?= $direction === 'ASC' ? '&uarr; Asc' : '&darr; Desc' ?>
+        </button>
+    </div>
 </form>
 
 <?= categoryLegend($categories) ?>

@@ -31,6 +31,10 @@ $active = $activeNav ?? '';
         </ul>
     </nav>
     <div class="sidebar-footer">
+        <button type="button" class="theme-toggle" id="themeToggle" title="Toggle dark mode">
+            <span id="themeIcon">&#127769;</span>
+            <span id="themeLabel">Dark Mode</span>
+        </button>
         <div class="user-card">
             <span class="user-avatar">AU</span>
             <span class="user-info">
