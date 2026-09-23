@@ -683,6 +683,23 @@ a {
     color: var(--ink);
 }
 
+.sort-dir-toggle {
+    padding: 11px 14px;
+    border-radius: 10px;
+    border: 1px solid var(--border);
+    background: #fff;
+    font-family: inherit;
+    font-size: 0.86rem;
+    font-weight: 500;
+    color: var(--ink);
+    cursor: pointer;
+    white-space: nowrap;
+}
+
+.sort-dir-toggle:hover {
+    background: #f7f6f2;
+}
+
 /* Forms */
 
 .field {

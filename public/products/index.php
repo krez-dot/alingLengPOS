@@ -50,7 +50,7 @@ require __DIR__ . '/../includes/header.php';
         <option value="selling_price" <?= $sortBy === 'selling_price' ? 'selected' : '' ?>>Sort: Price</option>
         <option value="stock_quantity" <?= $sortBy === 'stock_quantity' ? 'selected' : '' ?>>Sort: Stock</option>
     </select>
-    <button type="submit" name="dir" value="<?= $direction === 'ASC' ? 'DESC' : 'ASC' ?>" class="btn btn-outline btn-sm" title="Toggle sort direction">
+    <button type="submit" name="dir" value="<?= $direction === 'ASC' ? 'DESC' : 'ASC' ?>" class="sort-dir-toggle" title="Toggle sort direction">
         <?= $direction === 'ASC' ? '&uarr; Asc' : '&darr; Desc' ?>
     </button>
 </form>
