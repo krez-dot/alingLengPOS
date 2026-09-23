@@ -58,7 +58,8 @@ class Product extends Model
         string $sortBy = 'name',
         string $direction = 'ASC',
         int $limit = 20,
-        int $offset = 0
+        int $offset = 0,
+        ?int $supplierId = null
     ): array {
         $allowedSort = ['name', 'selling_price', 'stock_quantity', 'created_at'];
         if (!in_array($sortBy, $allowedSort, true)) {
@@ -78,6 +79,11 @@ class Product extends Model
             $params['category_id'] = $categoryId;
         }
 
+        if ($supplierId !== null) {
+            $sql .= ' AND p.supplier_id = :supplier_id';
+            $params['supplier_id'] = $supplierId;
+        }
+
         $sql .= " ORDER BY p.{$sortBy} {$direction} LIMIT :limit OFFSET :offset";
 
         $stmt = $this->db->prepare($sql);
@@ -91,7 +97,7 @@ class Product extends Model
         return $stmt->fetchAll();
     }
 
-    public function countSearch(string $keyword = '', ?int $categoryId = null): int
+    public function countSearch(string $keyword = '', ?int $categoryId = null, ?int $supplierId = null): int
     {
         $sql = 'SELECT COUNT(*) FROM products WHERE name LIKE :keyword';
         $params = ['keyword' => "%{$keyword}%"];
@@ -99,6 +105,11 @@ class Product extends Model
         if ($categoryId !== null) {
             $sql .= ' AND category_id = :category_id';
             $params['category_id'] = $categoryId;
+        }
+
+        if ($supplierId !== null) {
+            $sql .= ' AND supplier_id = :supplier_id';
+            $params['supplier_id'] = $supplierId;
         }
 
         $stmt = $this->db->prepare($sql);

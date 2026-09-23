@@ -1408,3 +1408,42 @@ table.data-table {
 .modal-actions .btn {
     flex: 1;
 }
+
+/* Print (receipt) */
+
+.print-only {
+    display: none;
+}
+
+@media print {
+    body * {
+        visibility: hidden;
+    }
+
+    #printableReceipt,
+    #printableReceipt * {
+        visibility: visible;
+    }
+
+    #printableReceipt {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+    }
+
+    #printableReceipt .card {
+        max-width: 100%;
+        box-shadow: none;
+        border: none;
+    }
+
+    .print-only {
+        display: block;
+        margin-bottom: 16px;
+    }
+
+    .no-print {
+        display: none !important;
+    }
+}

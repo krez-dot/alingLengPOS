@@ -4,7 +4,8 @@ require __DIR__ . '/../../bootstrap.php';
 
 use App\Models\Supplier;
 
-$suppliers = (new Supplier())->all('name');
+$keyword = trim($_GET['q'] ?? '');
+$suppliers = (new Supplier())->search($keyword);
 
 $activeNav = 'suppliers';
 $pageTitle = "Suppliers - Aling Leng's Sari-Sari Store";
@@ -18,6 +19,13 @@ require __DIR__ . '/../includes/header.php';
     </div>
     <a href="<?= BASE_URL ?>/suppliers/create.php" class="btn btn-primary">+ Add Supplier</a>
 </div>
+
+<form method="get" class="toolbar">
+    <div class="search-input-wrap">
+        <span class="search-icon"><?= navIcon('search') ?></span>
+        <input type="text" name="q" class="search-input" placeholder="Search name or contact person..." value="<?= htmlspecialchars($keyword) ?>">
+    </div>
+</form>
 
 <div class="table-wrap">
     <table class="data-table">

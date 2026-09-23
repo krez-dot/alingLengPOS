@@ -14,6 +14,7 @@
         })();
     </script>
     <title><?= htmlspecialchars($pageTitle ?? "Aling Leng's Sari-Sari Store") ?></title>
+    <link rel="icon" type="image/svg+xml" href="<?= BASE_URL ?>/assets/favicon.svg">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
     <link href="<?= BASE_URL ?>/assets/css/style.css" rel="stylesheet">

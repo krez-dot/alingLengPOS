@@ -4,22 +4,26 @@ require __DIR__ . '/../../bootstrap.php';
 
 use App\Models\Category;
 use App\Models\Product;
+use App\Models\Supplier;
 
 $productModel = new Product();
 $categoryModel = new Category();
+$supplierModel = new Supplier();
 
 $keyword = trim($_GET['q'] ?? '');
 $categoryId = isset($_GET['category_id']) && $_GET['category_id'] !== '' ? (int) $_GET['category_id'] : null;
+$supplierId = isset($_GET['supplier_id']) && $_GET['supplier_id'] !== '' ? (int) $_GET['supplier_id'] : null;
 $sortBy = $_GET['sort'] ?? 'name';
 $direction = $_GET['dir'] ?? 'ASC';
 $page = max(1, (int) ($_GET['page'] ?? 1));
 $perPage = 10;
 $offset = ($page - 1) * $perPage;
 
-$products = $productModel->search($keyword, $categoryId, $sortBy, $direction, $perPage, $offset);
-$totalProducts = $productModel->countSearch($keyword, $categoryId);
+$products = $productModel->search($keyword, $categoryId, $sortBy, $direction, $perPage, $offset, $supplierId);
+$totalProducts = $productModel->countSearch($keyword, $categoryId, $supplierId);
 $totalPages = (int) ceil($totalProducts / $perPage);
 $categories = $categoryModel->all('name');
+$suppliers = $supplierModel->all('name');
 
 $activeNav = 'products';
 $pageTitle = "Products - Aling Leng's Sari-Sari Store";
@@ -45,6 +49,12 @@ require __DIR__ . '/../includes/header.php';
             <button type="submit" name="category_id" value="<?= $cat['id'] ?>" class="pill <?= $categoryId === (int) $cat['id'] ? 'active' : '' ?>"><?= htmlspecialchars($cat['name']) ?></button>
         <?php endforeach; ?>
     </div>
+    <select name="supplier_id" class="sort-select" onchange="this.form.submit()">
+        <option value="">All Suppliers</option>
+        <?php foreach ($suppliers as $sup): ?>
+            <option value="<?= $sup['id'] ?>" <?= $supplierId === (int) $sup['id'] ? 'selected' : '' ?>><?= htmlspecialchars($sup['name']) ?></option>
+        <?php endforeach; ?>
+    </select>
     <div class="sort-control-group">
         <select name="sort" class="sort-select" onchange="this.form.submit()">
             <option value="name" <?= $sortBy === 'name' ? 'selected' : '' ?>>Sort: Name</option>
@@ -62,17 +72,18 @@ require __DIR__ . '/../includes/header.php';
 <div class="table-wrap">
     <table class="data-table">
         <thead>
-            <tr><th>SKU</th><th>Product</th><th>Category</th><th>Price</th><th>Stock</th><th>Actions</th></tr>
+            <tr><th>SKU</th><th>Product</th><th>Category</th><th>Supplier</th><th>Price</th><th>Stock</th><th>Actions</th></tr>
         </thead>
         <tbody>
             <?php if (empty($products)): ?>
-                <tr class="empty-row"><td colspan="6">No products found.</td></tr>
+                <tr class="empty-row"><td colspan="7">No products found.</td></tr>
             <?php endif; ?>
             <?php foreach ($products as $product): $isLow = (int) $product['stock_quantity'] <= (int) $product['reorder_level']; ?>
                 <tr>
                     <td class="muted"><?= htmlspecialchars($product['sku']) ?></td>
                     <td class="strong"><?= htmlspecialchars($product['name']) ?></td>
                     <td><span class="badge-pill <?= categoryBadgeClass($product['category_name'] ?? null, $product['category_color'] ?? null) ?>"><?= htmlspecialchars($product['category_name'] ?? '-') ?></span></td>
+                    <td class="muted"><?= htmlspecialchars($product['supplier_name'] ?? '-') ?></td>
                     <td class="price-cell">&#8369;<?= number_format((float) $product['selling_price'], 2) ?></td>
                     <td>
                         <?= (int) $product['stock_quantity'] ?> units
@@ -96,7 +107,7 @@ require __DIR__ . '/../includes/header.php';
     <ul class="pagination">
         <?php for ($i = 1; $i <= $totalPages; $i++): ?>
             <li class="<?= $i === $page ? 'active' : '' ?>">
-                <a href="?q=<?= urlencode($keyword) ?>&category_id=<?= (int) $categoryId ?>&sort=<?= htmlspecialchars($sortBy) ?>&dir=<?= htmlspecialchars($direction) ?>&page=<?= $i ?>"><?= $i ?></a>
+                <a href="?q=<?= urlencode($keyword) ?>&category_id=<?= (int) $categoryId ?>&supplier_id=<?= (int) $supplierId ?>&sort=<?= htmlspecialchars($sortBy) ?>&dir=<?= htmlspecialchars($direction) ?>&page=<?= $i ?>"><?= $i ?></a>
             </li>
         <?php endfor; ?>
     </ul>

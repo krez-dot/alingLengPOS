@@ -37,4 +37,16 @@ class Supplier extends Model
             'id' => $id,
         ]);
     }
+
+    public function search(string $keyword = ''): array
+    {
+        $stmt = $this->db->prepare(
+            'SELECT * FROM suppliers
+             WHERE name LIKE :keyword OR contact_person LIKE :keyword2
+             ORDER BY name ASC'
+        );
+        $stmt->execute(['keyword' => "%{$keyword}%", 'keyword2' => "%{$keyword}%"]);
+
+        return $stmt->fetchAll();
+    }
 }
